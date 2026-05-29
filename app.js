@@ -91,6 +91,7 @@ let loyaltyPoints = 0;
 let monthlyExpense = 0;
 let activeCategory = "all";
 let searchQuery = "";
+let searchHistory = [];
 
 // Elements lookup
 const productsGrid = document.getElementById("products-grid");
@@ -186,6 +187,7 @@ document.addEventListener("DOMContentLoaded", () => {
     loadWishlistFromStorage();
     loadEhrFromStorage();
     loadLoyaltyFromStorage();
+    loadSearchHistory();
     
     // Initial Render
     renderActiveProducts();
@@ -289,13 +291,64 @@ function setupNavigation() {
     if (closeCheckoutBtn) closeCheckoutBtn.addEventListener("click", closeAllModals);
     if (closeArticleModalBtn) closeArticleModalBtn.addEventListener("click", closeAllModals);
 
-    // Search and category selectors
+    // Search and category selectors (Upgrade 1 with Debounced Search History)
+    let searchDebounce;
     if (searchBox) {
         searchBox.addEventListener("input", (e) => {
             searchQuery = e.target.value;
             renderActiveProducts();
+            
+            clearTimeout(searchDebounce);
+            searchDebounce = setTimeout(() => {
+                if (searchQuery.trim().length >= 2) {
+                    saveSearchHistory(searchQuery);
+                }
+            }, 1200);
         });
     }
+
+function loadSearchHistory() {
+    try {
+        const saved = localStorage.getItem("pc_search_history");
+        searchHistory = saved ? JSON.parse(saved) : [];
+    } catch (e) {
+        searchHistory = [];
+    }
+    renderSearchHistoryTags();
+}
+
+function saveSearchHistory(query) {
+    const q = query.trim();
+    if (!q || q.length < 2) return;
+    searchHistory = searchHistory.filter(item => item.toLowerCase() !== q.toLowerCase());
+    searchHistory.unshift(q);
+    if (searchHistory.length > 5) searchHistory.pop();
+    localStorage.setItem("pc_search_history", JSON.stringify(searchHistory));
+    renderSearchHistoryTags();
+}
+
+function renderSearchHistoryTags() {
+    const section = document.getElementById("recent-searches-section");
+    const container = document.getElementById("recent-searches-tags");
+    if (!section || !container) return;
+    if (searchHistory.length === 0) {
+        section.style.display = "none";
+        return;
+    }
+    section.style.display = "block";
+    container.innerHTML = "";
+    searchHistory.forEach(q => {
+        const tag = document.createElement("button");
+        tag.className = "recent-search-tag";
+        tag.innerHTML = `<i class="fa-solid fa-clock-rotate-left"></i> ${q}`;
+        tag.addEventListener("click", () => {
+            searchBox.value = q;
+            searchQuery = q;
+            renderActiveProducts();
+        });
+        container.appendChild(tag);
+    });
+}
 
     document.querySelectorAll("#category-tabs .tab-btn").forEach(btn => {
         btn.addEventListener("click", () => {

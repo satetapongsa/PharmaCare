@@ -2638,4 +2638,31 @@ footer {
     }
 }
 
+/* Upgrade 1: Recent Search Tags styling */
+.recent-search-tag {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 4px 10px;
+    cursor: pointer;
+    font-size: 0.75rem;
+    transition: var(--transition);
+    color: var(--text-secondary);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    box-shadow: var(--shadow-sm);
+}
+
+.recent-search-tag:hover {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+.recent-search-tag i {
+    font-size: 0.65rem;
+    opacity: 0.8;
+}
+
 
