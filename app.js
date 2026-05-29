@@ -114,6 +114,7 @@ let activeCategory = "all";
 let searchQuery = "";
 let searchHistory = [];
 let isMuted = false;
+let currentCurrency = "THB";
 
 // Elements lookup
 const productsGrid = document.getElementById("products-grid");
@@ -226,6 +227,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setupChatbot();
     setupContactForm();
     setupAudioSystem();
+    setupCurrencySelector();
     
     // Header Scroll Shadow and Back to Top logic (Upgrade 2)
     const backToTopBtn = document.getElementById("back-to-top-btn");
@@ -513,6 +515,36 @@ window.openFullArticle = function(id) {
 
 
 
+// Upgrade 5: Currency formatting and live exchange rates
+function formatPrice(priceThb) {
+    if (currentCurrency === "USD") {
+        return `$${(priceThb / 36.5).toFixed(2)}`;
+    } else if (currentCurrency === "EUR") {
+        return `€${(priceThb / 39.5).toFixed(2)}`;
+    } else {
+        return `${priceThb.toLocaleString()} ฿`;
+    }
+}
+
+function setupCurrencySelector() {
+    const selector = document.getElementById("currency-select");
+    if (!selector) return;
+    
+    // Load from localStorage
+    const saved = localStorage.getItem("pc_current_currency");
+    if (saved) {
+        currentCurrency = saved;
+        selector.value = saved;
+    }
+    
+    selector.addEventListener("change", (e) => {
+        currentCurrency = e.target.value;
+        localStorage.setItem("pc_current_currency", currentCurrency);
+        renderActiveProducts();
+        updateCartUI();
+    });
+}
+
 // Render active product lists with Formal Medical Trust Badges containing official medical icons
 function renderActiveProducts() {
     productsGrid.innerHTML = "";
@@ -633,7 +665,7 @@ function renderActiveProducts() {
                 ${stockHtml}
                 
                 <div class="product-footer">
-                    <div class="product-price">${product.price} <span>${currentLang === "th" ? "บาท" : "THB"}</span></div>
+                    <div class="product-price">${formatPrice(product.price)}</div>
                     <button class="add-to-cart-btn" onclick="addToCart(${product.id})" ${isOutOfStock ? 'disabled style="background:var(--text-muted); cursor:not-allowed; box-shadow:none;"' : ''}>
                         <i class="fa-solid ${isOutOfStock ? 'fa-circle-xmark' : 'fa-cart-plus'}"></i> ${isOutOfStock ? (currentLang === "th" ? "สินค้าหมด" : "Out of Stock") : (currentLang === "th" ? "เพิ่มลงตะกร้า" : "Add to Cart")}
                     </button>
@@ -1449,7 +1481,7 @@ function updateCartUI() {
             <img src="${item.image}" alt="${item.name}" class="cart-item-img">
             <div class="cart-item-details">
                 <h4 class="cart-item-title">${item.name}</h4>
-                <div class="cart-item-price">${item.price} บาท</div>
+                <div class="cart-item-price">${formatPrice(item.price)}</div>
                 <div class="cart-item-controls">
                     <div class="quantity-control">
                         <button class="qty-btn" onclick="changeQuantity(${item.id}, -1)">-</button>
@@ -1469,11 +1501,11 @@ function updateCartUI() {
     const finalTotal = subtotal + shipping;
     
     cartCountBadge.textContent = totalItems;
-    subtotalPriceEl.textContent = `${subtotal.toLocaleString()} ${currentLang === "th" ? "บาท" : "THB"}`;
+    subtotalPriceEl.textContent = formatPrice(subtotal);
     shippingPriceEl.textContent = shipping === 0 
         ? (currentLang === "th" ? "ฟรีจัดส่ง" : "Free Shipping") 
-        : `${shipping} ${currentLang === "th" ? "บาท" : "THB"}`;
-    totalPriceEl.textContent = `${finalTotal.toLocaleString()} ${currentLang === "th" ? "บาท" : "THB"}`;
+        : formatPrice(shipping);
+    totalPriceEl.textContent = formatPrice(finalTotal);
 }
 
 function saveCartToStorage() {
