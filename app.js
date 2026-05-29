@@ -229,6 +229,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setupAudioSystem();
     setupCurrencySelector();
     setupVideoCall();
+    setupPrescriptionScanner();
     
     // Header Scroll Shadow and Back to Top logic (Upgrade 2)
     const backToTopBtn = document.getElementById("back-to-top-btn");
@@ -2006,5 +2007,58 @@ function setupVideoCall() {
             icon.className = "fa-solid fa-microphone";
             showToast(currentLang === "th" ? "เปิดไมโครโฟนเรียบร้อย" : "Microphone Unmuted");
         }
+    });
+}
+
+// Upgrade 7: Custom Prescription Upload Scanner
+function setupPrescriptionScanner() {
+    const dropzone = document.getElementById("prescription-dropzone");
+    const fileInput = document.getElementById("prescription-file-input");
+    const idleView = document.getElementById("scanner-idle-view");
+    const loadingView = document.getElementById("scanner-loading-view");
+    const progressBar = document.getElementById("scanner-progress-bar");
+    
+    if (!dropzone || !fileInput) return;
+    
+    dropzone.addEventListener("click", () => {
+        fileInput.click();
+    });
+    
+    fileInput.addEventListener("change", (e) => {
+        if (e.target.files.length === 0) return;
+        
+        playSound("click");
+        idleView.style.display = "none";
+        loadingView.style.display = "flex";
+        progressBar.style.width = "0%";
+        
+        let progress = 0;
+        const interval = setInterval(() => {
+            progress += 5;
+            progressBar.style.width = `${progress}%`;
+            
+            if (progress >= 100) {
+                clearInterval(interval);
+                
+                // Simulate scan complete
+                setTimeout(() => {
+                    idleView.style.display = "block";
+                    loadingView.style.display = "none";
+                    fileInput.value = ""; // Reset file input
+                    
+                    playSound("success");
+                    
+                    // Add Paracetamol (ID 1) and Herbal Cough Syrup (ID 6)
+                    addToCart(1);
+                    addToCart(6);
+                    
+                    showToast(
+                        currentLang === "th"
+                            ? "✓ สแกนใบสั่งยาสำเร็จ! ระบบตรวจพบและเพิ่มยาสามัญลงในตะกร้าแล้ว"
+                            : "✓ Prescription scanned! Identified & added medications to your cart."
+                    );
+                }, 300);
+            }
+        }, 100);
     });
 }
