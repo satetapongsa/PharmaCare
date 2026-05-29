@@ -707,6 +707,24 @@
                     <input type="text" id="cust-address" class="checkout-input" data-placeholder-th="เลขที่ 45/9 หมู่ 2 แขวงพญาไท เขตราชเทวี กรุงเทพมหานคร" data-placeholder-en="45/9 Moo 2 Phayathai Road, Ratchathewi, Bangkok" placeholder="เลขที่ 45/9 หมู่ 2 แขวงพญาไท เขตราชเทวี กรุงเทพมหานคร" required>
                 </div>
                 <div class="checkout-form-group">
+                    <label for="cust-province" class="lang-text" data-th="จังหวัดปลายทางจัดส่ง *" data-en="Destination Province *">จังหวัดปลายทางจัดส่ง *</label>
+                    <select id="cust-province" class="checkout-input" style="width: 100%; border-radius: var(--radius-sm); border: 1px solid var(--border); outline: none; padding: 10px; background: var(--bg-card); color: var(--text-primary); cursor: pointer;" required>
+                        <option value="bangkok">กรุงเทพมหานครและปริมณฑล / Bangkok & Vicinity</option>
+                        <option value="central">ภาคกลาง / Central Thailand</option>
+                        <option value="north">ภาคเหนือ / Northern Thailand</option>
+                        <option value="south">ภาคใต้ / Southern Thailand</option>
+                        <option value="northeast">ภาคตะวันออกเฉียงเหนือ / Northeastern Thailand</option>
+                    </select>
+                </div>
+                <!-- Real-Time Delivery Date Estimate Info -->
+                <div style="background: rgba(14, 165, 233, 0.08); border: 1px solid rgba(14, 165, 233, 0.15); border-radius: var(--radius-sm); padding: 10px 15px; margin-top: -5px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; font-size: 0.8rem; color: var(--text-primary);">
+                    <i class="fa-solid fa-truck-ramp-box" style="color: var(--secondary); font-size: 1.1rem;"></i>
+                    <div>
+                        <span class="lang-text" data-th="ประมาณการเวลาจัดส่งพัสดุ:" data-en="Estimated Delivery Date:">ประมาณการเวลาจัดส่งพัสดุ:</span>
+                        <strong style="color: var(--secondary);" id="est-delivery-date-txt">วันพรุ่งนี้ (Tomorrow)</strong>
+                    </div>
+                </div>
+                <div class="checkout-form-group">
                     <label for="promo-code" class="lang-text" data-th="คูปอง / โค้ดส่วนลด (เช่น HEALTH20, WELCOME100)" data-en="Promo Code (e.g., HEALTH20, WELCOME100)">คูปอง / โค้ดส่วนลด (เช่น HEALTH20, WELCOME100)</label>
                     <div style="display:flex; gap:10px;">
                         <input type="text" id="promo-code" class="checkout-input" data-placeholder-th="กรอกโค้ดส่วนลดที่นี่" data-placeholder-en="Enter promo code here" placeholder="กรอกโค้ดส่วนลดที่นี่">
@@ -792,6 +810,11 @@
             <div class="receipt-row" style="margin-top: 15px; border-top: 1px dotted var(--border); padding-top: 8px;">
                 <span class="lang-text" data-th="เลขพัสดุสำหรับติดตาม:" data-en="Tracking Delivery ID:">เลขพัสดุสำหรับติดตาม:</span>
                 <span id="receipt-track-num" style="font-weight: 600; color: var(--secondary);">TH000000000000</span>
+            </div>
+
+            <div class="receipt-row">
+                <span class="lang-text" data-th="วันคาดว่าจะได้รับพัสดุ:" data-en="Est. Delivery Date:">วันคาดว่าจะได้รับพัสดุ:</span>
+                <span id="receipt-est-date" style="font-weight: 600; color: var(--primary);">วันพรุ่งนี้ / Tomorrow</span>
             </div>
 
             <div class="receipt-row" style="margin-top: 5px; border-bottom: 1px dotted var(--border); padding-bottom: 8px;">

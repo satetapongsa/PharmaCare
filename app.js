@@ -230,6 +230,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setupCurrencySelector();
     setupVideoCall();
     setupPrescriptionScanner();
+    setupDeliveryDateCalculator();
     
     // Header Scroll Shadow and Back to Top logic (Upgrade 2)
     const backToTopBtn = document.getElementById("back-to-top-btn");
@@ -2061,4 +2062,54 @@ function setupPrescriptionScanner() {
             }
         }, 100);
     });
+}
+
+// Upgrade 8: Real-Time Estimated Delivery Date Calculator
+function setupDeliveryDateCalculator() {
+    const provinceSelect = document.getElementById("cust-province");
+    const estTxt = document.getElementById("est-delivery-date-txt");
+    
+    if (!provinceSelect || !estTxt) return;
+    
+    const calculateEstimate = () => {
+        const val = provinceSelect.value;
+        const now = new Date();
+        
+        let daysToAdd = 1;
+        if (val === "bangkok") {
+            daysToAdd = 1; // 1 day for Bangkok
+        } else if (val === "central") {
+            daysToAdd = 2; // 2 days
+        } else {
+            daysToAdd = 3; // 3 days for other regions
+        }
+        
+        const estDate = new Date(now.getTime() + daysToAdd * 24 * 60 * 60 * 1000);
+        const day = estDate.getDate();
+        const monthTh = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."][estDate.getMonth()];
+        const monthEn = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][estDate.getMonth()];
+        const yearTh = estDate.getFullYear() + 543;
+        const yearEn = estDate.getFullYear();
+        
+        const thStr = `ภายใน ${day} ${monthTh} ${yearTh}`;
+        const enStr = `by ${day} ${monthEn} ${yearEn}`;
+        
+        estTxt.innerHTML = currentLang === "th" ? `${thStr} (${daysToAdd} วัน)` : `${enStr} (${daysToAdd} Days)`;
+        
+        // Also update receipt E-invoice field if exists
+        const receiptEst = document.getElementById("receipt-est-date");
+        if (receiptEst) {
+            receiptEst.textContent = currentLang === "th" ? thStr : enStr;
+        }
+    };
+    
+    provinceSelect.addEventListener("change", calculateEstimate);
+    
+    // Listen to language toggles to re-evaluate the text representation
+    const langBtn = document.getElementById("lang-toggle-btn");
+    if (langBtn) {
+        langBtn.addEventListener("click", calculateEstimate);
+    }
+    
+    calculateEstimate();
 }
