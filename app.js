@@ -757,26 +757,47 @@ function setupLanguageSwitch() {
     });
 }
 
-// 2. Dark/Light Theme Switcher Logic
+// 2. Dark/Light Theme Switcher Logic (Upgrade 11)
 function setupThemeSwitch() {
     // Load local storage theme configuration
     const savedTheme = localStorage.getItem("pharma_theme");
-    if (savedTheme === "dark") {
-        document.body.classList.add("dark-mode");
-        themeToggleBtn.innerHTML = `<i class="fa-solid fa-sun"></i>`;
+    
+    const applyTheme = (isDark) => {
+        if (isDark) {
+            document.body.classList.add("dark-mode");
+            themeToggleBtn.innerHTML = `<i class="fa-solid fa-sun"></i>`;
+        } else {
+            document.body.classList.remove("dark-mode");
+            themeToggleBtn.innerHTML = `<i class="fa-solid fa-moon"></i>`;
+        }
+    };
+    
+    if (savedTheme) {
+        applyTheme(savedTheme === "dark");
+    } else {
+        // Auto system detection (Upgrade 11)
+        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        applyTheme(prefersDark);
     }
+    
+    // Listen to changes in system preferences in real-time (Upgrade 11)
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
+        if (!localStorage.getItem("pharma_theme")) {
+            applyTheme(e.matches);
+            showToast(currentLang === "th" ? "ปรับโหมดสีตามระบบ OS อัตโนมัติ" : "Synced theme with system preferences");
+        }
+    });
     
     themeToggleBtn.addEventListener("click", () => {
         document.body.classList.toggle("dark-mode");
-        if (document.body.classList.contains("dark-mode")) {
-            localStorage.setItem("pharma_theme", "dark");
-            themeToggleBtn.innerHTML = `<i class="fa-solid fa-sun"></i>`;
-            showToast("สลับเข้าสู่โหมดกลางคืนพรีเมียม 🌓");
-        } else {
-            localStorage.setItem("pharma_theme", "light");
-            themeToggleBtn.innerHTML = `<i class="fa-solid fa-moon"></i>`;
-            showToast("สลับเข้าสู่โหมดกลางวันสว่างสะอาดตา ☀️");
-        }
+        const isDark = document.body.classList.contains("dark-mode");
+        localStorage.setItem("pharma_theme", isDark ? "dark" : "light");
+        applyTheme(isDark);
+        showToast(
+            isDark 
+                ? (currentLang === "th" ? "สลับเข้าสู่โหมดกลางคืนพรีเมียม 🌓" : "Switched to Premium Dark Mode 🌓")
+                : (currentLang === "th" ? "สลับเข้าสู่โหมดกลางวันสว่างสะอาดตา ☀️" : "Switched to Clean Light Mode ☀️")
+        );
     });
 }
 
