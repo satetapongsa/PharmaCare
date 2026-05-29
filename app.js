@@ -1537,6 +1537,9 @@ function updateCartUI() {
         ? (currentLang === "th" ? "ฟรีจัดส่ง" : "Free Shipping") 
         : formatPrice(shipping);
     totalPriceEl.textContent = formatPrice(finalTotal);
+    
+    // Manage cart reservation countdown banner (Upgrade 14)
+    handleCartReservationTimer();
 }
 
 function saveCartToStorage() {
@@ -2398,4 +2401,73 @@ function generateRatingChartHTML(product) {
             </div>
         </div>
     `;
+}
+
+// Upgrade 14: Dynamic Cart Reservation Expiration Timer
+let cartTimerInterval;
+let cartSecondsRemaining = 600;
+
+function clearAndRestoreStock() {
+    cart.forEach(item => {
+        const id = item.id;
+        const qty = item.quantity;
+        // Restore stock
+        Object.keys(products).forEach(lang => {
+            const prod = products[lang].find(p => p.id === id);
+            if (prod) prod.stock += qty;
+        });
+    });
+    cart = [];
+    saveCartToStorage();
+    updateCartUI();
+    renderActiveProducts();
+}
+
+function handleCartReservationTimer() {
+    const banner = document.getElementById("cart-reservation-banner");
+    const countEl = document.getElementById("cart-timer-countdown");
+    
+    if (!banner || !countEl) return;
+    
+    if (cart.length === 0) {
+        // Clear interval if empty
+        if (cartTimerInterval) {
+            clearInterval(cartTimerInterval);
+            cartTimerInterval = null;
+        }
+        banner.style.display = "none";
+        cartSecondsRemaining = 600;
+        return;
+    }
+    
+    // Show banner
+    banner.style.display = "flex";
+    
+    // If interval already running, do nothing
+    if (cartTimerInterval) return;
+    
+    cartSecondsRemaining = 600; // Reset to 10 minutes on new items
+    
+    cartTimerInterval = setInterval(() => {
+        cartSecondsRemaining--;
+        
+        const mm = String(Math.floor(cartSecondsRemaining / 60)).padStart(2, '0');
+        const ss = String(cartSecondsRemaining % 60).padStart(2, '0');
+        countEl.textContent = `${mm}:${ss}`;
+        
+        if (cartSecondsRemaining <= 0) {
+            clearInterval(cartTimerInterval);
+            cartTimerInterval = null;
+            
+            // Clear cart & restore stock
+            clearAndRestoreStock();
+            playSound("success");
+            
+            showToast(
+                currentLang === "th"
+                    ? "✗ หมดเวลาจองสินค้าในตะกร้า ตะกร้าสินค้าถูกรีเซ็ตเเล้ว"
+                    : "✗ Cart reservation expired. Your cart has been reset."
+            );
+        }
+    }, 1000);
 }
