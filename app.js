@@ -1687,6 +1687,23 @@ window.openProductDetail = function(productId) {
                 <i class="fa-solid fa-prescription-bottle-medical"></i> ${product.spec}
             </p>
             
+            ${(product.id === 1 || product.id === 6) ? `
+            <!-- Dosage Calculator Widget (Upgrade 18) -->
+            <div class="glass" style="padding: 15px; border-radius: var(--radius-md); margin-bottom: 20px; border: 1px solid rgba(14, 165, 233, 0.2); background: rgba(14, 165, 233, 0.03);">
+                <h4 style="font-size: 0.85rem; font-weight: 700; color: var(--secondary); margin-bottom: 8px;"><i class="fa-solid fa-calculator"></i> ${currentLang === "th" ? "คำนวณปริมาณยาที่เหมาะสมตามน้ำหนักตัว" : "Weight-Based Medical Dosage Calculator"}</h4>
+                <p style="font-size: 0.72rem; color: var(--text-secondary); margin-bottom: 12px;">
+                    ${currentLang === "th" ? "สูตรคำนวณสากลโดยควบคุมตามปริมาตรความเข้มข้นของตัวยาเพื่อความปลอดภัยสูงสุด" : "International pediatric & clinical concentration dosage helper for patient safety."}
+                </p>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <input type="number" id="dosage-weight-input" class="checkout-input" style="flex-grow: 1; padding: 6px 12px; font-size: 0.8rem; margin: 0; background: var(--bg-card); color: var(--text-primary);" placeholder="${currentLang === "th" ? "น้ำหนักของคุณ เช่น 60 กก." : "Weight in kg, e.g., 60"}">
+                    <button class="tab-btn" onclick="calculateRecommendedDose(${product.id})" style="background: var(--secondary); color: white; border: none; margin: 0; padding: 0 15px; height: 35px; font-size: 0.78rem;">${currentLang === "th" ? "คำนวณ" : "Calculate"}</button>
+                </div>
+                <div id="dosage-result-box" style="margin-top: 10px; display: none; font-size: 0.8rem; font-weight: 600; color: var(--primary);">
+                    <!-- Dynamic dose output -->
+                </div>
+            </div>
+            ` : ""}
+            
             <div class="modal-caution">
                 <i class="fa-solid fa-triangle-exclamation"></i>
                 <p>${product.caution}</p>
@@ -2596,4 +2613,46 @@ window.getClinicDirections = function() {
             ? `✓ เริ่มระบบจำลองจีพีเอสนำทางไปยัง "${branchName}" สำเร็จ!`
             : `✓ Starting simulated GPS navigation to "${branchName}"!`
     );
+};
+
+// Upgrade 18: Customized Medical Dosage Weight Calculator
+window.calculateRecommendedDose = function(productId) {
+    const weightInput = document.getElementById("dosage-weight-input");
+    const resultBox = document.getElementById("dosage-result-box");
+    
+    if (!weightInput || !resultBox) return;
+    
+    const weight = parseFloat(weightInput.value);
+    if (isNaN(weight) || weight <= 0) {
+        playSound("click");
+        showToast(currentLang === "th" ? "✗ โปรดป้อนน้ำหนักตัวที่ถูกต้อง" : "✗ Please enter a valid body weight.");
+        return;
+    }
+    
+    playSound("success");
+    resultBox.style.display = "block";
+    
+    let dose = 0;
+    let unit = currentLang === "th" ? "มิลลิกรัม" : "mg";
+    let remark = "";
+    
+    if (productId === 1) {
+        // Paracetamol: 10-15 mg/kg per dose
+        const doseMin = Math.round(weight * 10);
+        const doseMax = Math.round(weight * 15);
+        dose = `${doseMin} - ${doseMax}`;
+        const pills = (weight >= 50) ? "1 - 1.5 เม็ด (pills)" : "0.5 - 1 เม็ด (pills)";
+        remark = currentLang === "th" 
+            ? `ปริมาณแนะนำคือ ${dose} ${unit} หรือประมาณ ${pills} ทานทุก 4-6 ชั่วโมง` 
+            : `Recommended dose is ${dose} ${unit} (approx. ${pills}) every 4-6 hours.`;
+    } else {
+        // Cough Syrup: 0.1 ml/kg per dose
+        dose = (weight * 0.15).toFixed(1);
+        unit = "ml (ช้อนชา/Teaspoon)";
+        remark = currentLang === "th" 
+            ? `ปริมาณแนะนำสำหรับยาน้ำคือ ${dose} ${unit} ทาน 2-3 ครั้งต่อวัน` 
+            : `Recommended liquid dose is ${dose} ${unit} taken 2-3 times daily.`;
+    }
+    
+    resultBox.innerHTML = `<i class="fa-solid fa-square-poll-horizontal"></i> ${remark}`;
 };
