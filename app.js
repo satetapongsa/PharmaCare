@@ -1817,7 +1817,9 @@ payQrBox.addEventListener("click", () => {
     selectedPaymentMethod = "PROMPTPAY";
 });
 
-// Floating Smart Chatbot logic
+// Floating Smart Chatbot logic (Upgrade 12 - with chat history persistence)
+let chatHistory = [];
+
 function setupChatbot() {
     chatToggleBtn.addEventListener("click", () => {
         chatBox.classList.toggle("active");
@@ -1828,6 +1830,27 @@ function setupChatbot() {
     chatCloseBtn.addEventListener("click", () => {
         chatBox.classList.remove("active");
     });
+    
+    // Load from LocalStorage
+    const savedChat = localStorage.getItem("pharma_chat_history");
+    if (savedChat) {
+        try {
+            chatHistory = JSON.parse(savedChat);
+            chatMessages.innerHTML = ""; // Clear default welcome bubble
+            chatHistory.forEach(msg => {
+                const bubble = document.createElement("div");
+                bubble.className = `chat-message-bubble ${msg.sender}`;
+                bubble.innerHTML = msg.text;
+                chatMessages.appendChild(bubble);
+            });
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        } catch (e) {
+            chatHistory = [];
+        }
+    } else {
+        // Seed default welcome bubble in history
+        chatHistory = [{ sender: "bot", text: dictionary[currentLang].chatbotWelcome }];
+    }
     
     const sendMsg = () => {
         const text = chatInput.value.trim();
@@ -1855,6 +1878,10 @@ function appendChatBubble(text, sender) {
     bubble.innerHTML = text;
     chatMessages.appendChild(bubble);
     chatMessages.scrollTop = chatMessages.scrollHeight;
+    
+    // Save to history (Upgrade 12)
+    chatHistory.push({ sender, text });
+    localStorage.setItem("pharma_chat_history", JSON.stringify(chatHistory));
 }
 
 function computeBotReply(userInput) {
