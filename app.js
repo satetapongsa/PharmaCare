@@ -1233,6 +1233,39 @@ function updateLoyaltyUI() {
     
     // Save points
     localStorage.setItem("pharma_loyalty_points", loyaltyPoints.toString());
+    
+    // Upgrade 16: Dynamic progress bar calculation
+    const progressDesc = document.getElementById("loyalty-progress-desc");
+    const progressPct = document.getElementById("loyalty-progress-pct");
+    const progressFill = document.getElementById("loyalty-progress-fill");
+    
+    if (progressDesc && progressPct && progressFill) {
+        let pct = 0;
+        let desc = "";
+        
+        if (loyaltyPoints < 500) {
+            pct = Math.round((loyaltyPoints / 500) * 100);
+            const needed = 500 - loyaltyPoints;
+            desc = currentLang === "th" 
+                ? `ต้องการอีก ${needed} คะแนนเพื่อเป็น Silver Member` 
+                : `Need ${needed} more points for Silver Member`;
+        } else if (loyaltyPoints < 1500) {
+            pct = Math.round(((loyaltyPoints - 500) / 1000) * 100);
+            const needed = 1500 - loyaltyPoints;
+            desc = currentLang === "th" 
+                ? `ต้องการอีก ${needed} คะแนนเพื่อเป็น Gold Member` 
+                : `Need ${needed} more points for Gold Member`;
+        } else {
+            pct = 100;
+            desc = currentLang === "th" 
+                ? "คุณอยู่ในระดับสูงสุดจำลองแล้ว 🎉" 
+                : "You have reached the maximum tier 🎉";
+        }
+        
+        progressPct.textContent = `${pct}%`;
+        progressFill.style.width = `${pct}%`;
+        progressDesc.textContent = desc;
+    }
 }
 
 // 10. Spending Expense Chart tracker & simulated delivery timelines

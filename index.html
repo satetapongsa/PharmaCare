@@ -394,6 +394,17 @@
                         <span class="lang-text" data-th="คะแนนสะสมทั้งหมด:" data-en="Total Reward Points:">คะแนนสะสมทั้งหมด:</span>
                         <strong style="color: var(--primary); font-size: 1.1rem;"><span id="loyalty-points-val">0</span> <span class="lang-text" data-th="คะแนน" data-en="Points">คะแนน</span></strong>
                     </div>
+
+                    <!-- Loyalty Tier Progress Bar (Upgrade 16) -->
+                    <div style="margin-top: 15px;">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-secondary); margin-bottom: 5px;">
+                            <span id="loyalty-progress-desc">ต้องการอีก 500 คะแนนเพื่อเลื่อนระดับ</span>
+                            <span id="loyalty-progress-pct" style="font-weight: 700;">0%</span>
+                        </div>
+                        <div style="width: 100%; height: 8px; background: rgba(0,0,0,0.06); border-radius: 4px; overflow: hidden; border: 1px solid var(--border);">
+                            <div id="loyalty-progress-fill" style="width: 0%; height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary)); border-radius: 4px; transition: var(--transition);"></div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Package delivery tracking -->
