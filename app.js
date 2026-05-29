@@ -232,6 +232,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setupPrescriptionScanner();
     setupDeliveryDateCalculator();
     setupPillScheduler();
+    setupHealthQuiz();
     
     // Header Scroll Shadow and Back to Top logic (Upgrade 2)
     const backToTopBtn = document.getElementById("back-to-top-btn");
@@ -1145,6 +1146,11 @@ function setupCheckoutCoupons() {
             promoStatusMsg.style.color = "var(--primary)";
             promoStatusMsg.textContent = currentLang === "th" ? "✓ ใช้โค้ดสำเร็จ! ลดราคาสั่งซื้อ 20%" : "✓ Promo applied! 20% discount granted.";
             showToast("ลดราคาคูปองสั่งซื้อ 20% สำเร็จ! 🏷️");
+        } else if (code === "QUIZ10") {
+            activeDiscount = 0.10; // 10% discount
+            promoStatusMsg.style.color = "var(--primary)";
+            promoStatusMsg.textContent = currentLang === "th" ? "✓ ใช้โค้ดสำเร็จ! ลดราคาสั่งซื้อ 10%" : "✓ Promo applied! 10% discount granted.";
+            showToast("ลดราคาคูปองสั่งซื้อ 10% สำเร็จ! 🏷️");
         } else if (code === "WELCOME100") {
             activeDiscount = 100; // Flat 100 THB discount
             promoStatusMsg.style.color = "var(--primary)";
@@ -2240,4 +2246,53 @@ function setupPillScheduler() {
     }, 10000);
     
     renderPills();
+}
+
+// Upgrade 10: Interactive Health Quiz & Promo Rewards
+let quizScores = { 1: 0, 2: 0, 3: 0 };
+
+function setupHealthQuiz() {
+    // Functions are exposed globally to facilitate html event handlers
+    window.selectQuizOption = (step, score) => {
+        playSound("click");
+        quizScores[step] = score;
+        
+        const currentStepEl = document.getElementById(`quiz-step-${step}`);
+        if (currentStepEl) currentStepEl.style.display = "none";
+        
+        if (step < 3) {
+            const nextStepEl = document.getElementById(`quiz-step-${step + 1}`);
+            if (nextStepEl) nextStepEl.style.display = "flex";
+        } else {
+            // Render results
+            const totalScore = Math.round((quizScores[1] + quizScores[2] + quizScores[3]) / 3);
+            const scoreLbl = document.getElementById("quiz-score-lbl");
+            if (scoreLbl) {
+                scoreLbl.innerHTML = currentLang === "th" 
+                    ? `คะแนนสุขภาพประเมินเฉลยของคุณ: <strong style="color: var(--primary); font-size: 1.25rem;">${totalScore}/100 คะแนน</strong>`
+                    : `Your evaluated health screening score: <strong style="color: var(--primary); font-size: 1.25rem;">${totalScore}/100 Points</strong>`;
+            }
+            
+            const resultView = document.getElementById("quiz-result-view");
+            if (resultView) resultView.style.display = "flex";
+            playSound("success");
+        }
+    };
+    
+    window.copyQuizCoupon = () => {
+        navigator.clipboard.writeText("QUIZ10").then(() => {
+            playSound("click");
+            showToast(currentLang === "th" ? "✓ คัดลอกโค้ดส่วนลด QUIZ10 ไปที่คลิปบอร์ดเเล้ว!" : "✓ Copied QUIZ10 promo code to clipboard!");
+        });
+    };
+    
+    window.resetHealthQuiz = () => {
+        playSound("click");
+        quizScores = { 1: 0, 2: 0, 3: 0 };
+        
+        document.getElementById("quiz-result-view").style.display = "none";
+        document.getElementById("quiz-step-1").style.display = "flex";
+        document.getElementById("quiz-step-2").style.display = "none";
+        document.getElementById("quiz-step-3").style.display = "none";
+    };
 }

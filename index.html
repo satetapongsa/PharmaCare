@@ -224,6 +224,64 @@
             </div>
         </div>
 
+        <!-- Health Quiz Widget (Upgrade 10) -->
+        <div class="ehr-card" style="margin-top: 25px; margin-bottom: 25px;">
+            <h3 style="font-weight: 700; color: var(--primary); font-size: 1.15rem; margin-bottom: 8px;">
+                <i class="fa-solid fa-clipboard-question"></i> <span class="lang-text" data-th="แบบประเมินสุขภาพอัจฉริยะ (Health Screening Quiz)" data-en="Smart Health Screening Quiz">แบบประเมินสุขภาพอัจฉริยะ (Health Screening Quiz)</span>
+            </h3>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 15px;"><span class="lang-text" data-th="ตอบคำถามสุขภาพสั้นๆ 3 ข้อ เพื่อรับคะแนนประเมินและโค้ดส่วนลด 10% พิเศษ!" data-en="Complete a short 3-question health evaluation to check your health score and unlock a 10% off coupon code!">ตอบคำถามสุขภาพสั้นๆ 3 ข้อ เพื่อรับคะแนนประเมินและโค้ดส่วนลด 10% พิเศษ!</span></p>
+            
+            <div id="health-quiz-box" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 25px; min-height: 180px; display: flex; flex-direction: column; justify-content: center; position: relative;">
+                <!-- Question 1 -->
+                <div class="quiz-step" id="quiz-step-1" style="display: flex; flex-direction: column; gap: 15px;">
+                    <h4 style="font-weight: 600; font-size: 1rem;"><span class="lang-text" data-th="คำถามที่ 1: คุณดื่มน้ำเฉลี่ยวันละกี่แก้ว?" data-en="Q1: How many glasses of water do you drink daily?">คำถามที่ 1: คุณดื่มน้ำเฉลี่ยวันละกี่แก้ว?</span></h4>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button class="tab-btn quiz-option" onclick="selectQuizOption(1, 30)"><span class="lang-text" data-th="น้อยกว่า 4 แก้ว" data-en="Less than 4 glasses">น้อยกว่า 4 แก้ว</span></button>
+                        <button class="tab-btn quiz-option" onclick="selectQuizOption(1, 70)"><span class="lang-text" data-th="4 - 7 แก้ว" data-en="4 - 7 glasses">4 - 7 แก้ว</span></button>
+                        <button class="tab-btn quiz-option" onclick="selectQuizOption(1, 100)"><span class="lang-text" data-th="8 แก้วขึ้นไป" data-en="8+ glasses">8 แก้วขึ้นไป</span></button>
+                    </div>
+                </div>
+                <!-- Question 2 -->
+                <div class="quiz-step" id="quiz-step-2" style="display: none; flex-direction: column; gap: 15px;">
+                    <h4 style="font-weight: 600; font-size: 1rem;"><span class="lang-text" data-th="คำถามที่ 2: คุณมีเวลาพักผ่อนวันละกี่ชั่วโมง?" data-en="Q2: How many hours of sleep do you get daily?">คำถามที่ 2: คุณมีเวลาพักผ่อนวันละกี่ชั่วโมง?</span></h4>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button class="tab-btn quiz-option" onclick="selectQuizOption(2, 30)"><span class="lang-text" data-th="น้อยกว่า 5 ชั่วโมง" data-en="Less than 5 hours">น้อยกว่า 5 ชั่วโมง</span></button>
+                        <button class="tab-btn quiz-option" onclick="selectQuizOption(2, 75)"><span class="lang-text" data-th="5 - 7 ชั่วโมง" data-en="5 - 7 hours">5 - 7 ชั่วโมง</span></button>
+                        <button class="tab-btn quiz-option" onclick="selectQuizOption(2, 100)"><span class="lang-text" data-th="8 ชั่วโมงขึ้นไป" data-en="8+ hours">8 ชั่วโมงขึ้นไป</span></button>
+                    </div>
+                </div>
+                <!-- Question 3 -->
+                <div class="quiz-step" id="quiz-step-3" style="display: none; flex-direction: column; gap: 15px;">
+                    <h4 style="font-weight: 600; font-size: 1rem;"><span class="lang-text" data-th="คำถามที่ 3: คุณออกกำลังกายบ่อยแค่ไหน?" data-en="Q3: How often do you exercise?">คำถามที่ 3: คุณออกกำลังกายบ่อยแค่ไหน?</span></h4>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button class="tab-btn quiz-option" onclick="selectQuizOption(3, 20)"><span class="lang-text" data-th="แทบไม่ได้ออกกำลังกาย" data-en="Rarely or never">แทบไม่ได้ออกกำลังกาย</span></button>
+                        <button class="tab-btn quiz-option" onclick="selectQuizOption(3, 70)"><span class="lang-text" data-th="สัปดาห์ละ 1 - 2 ครั้ง" data-en="1 - 2 times a week">สัปดาห์ละ 1 - 2 ครั้ง</span></button>
+                        <button class="tab-btn quiz-option" onclick="selectQuizOption(3, 100)"><span class="lang-text" data-th="สัปดาห์ละ 3 ครั้งขึ้นไป" data-en="3+ times a week">สัปดาห์ละ 3 ครั้งขึ้นไป</span></button>
+                    </div>
+                </div>
+                <!-- Quiz Result -->
+                <div class="quiz-step" id="quiz-result-view" style="display: none; flex-direction: column; align-items: center; justify-content: center; gap: 15px; text-align: center;">
+                    <h4 style="font-weight: 700; color: var(--primary); font-size: 1.15rem;"><span class="lang-text" data-th="ประเมินผลเสร็จสิ้น!" data-en="Evaluation Completed!">ประเมินผลเสร็จสิ้น!</span></h4>
+                    <p style="font-size: 0.9rem;" id="quiz-score-lbl">คะแนนสุขภาพสะสมของคุณ: <strong>85/100</strong></p>
+                    
+                    <!-- Coupon code block -->
+                    <div style="background: rgba(5, 150, 105, 0.1); border: 2px dashed var(--primary); padding: 12px 30px; border-radius: var(--radius-md); display: flex; align-items: center; gap: 15px; margin: 10px 0;">
+                        <div>
+                            <span style="font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); display: block;" class="lang-text" data-th="โค้ดส่วนลดของคุณ" data-en="YOUR PROMO CODE">โค้ดส่วนลดของคุณ</span>
+                            <strong style="font-size: 1.5rem; color: var(--primary); letter-spacing: 2px;">QUIZ10</strong>
+                        </div>
+                        <button class="tab-btn" onclick="copyQuizCoupon()" style="background: var(--primary); color: white; border: none; margin: 0; padding: 6px 12px; font-size: 0.78rem;">
+                            <i class="fa-solid fa-copy"></i> <span class="lang-text" data-th="คัดลอก" data-en="Copy">คัดลอก</span>
+                        </button>
+                    </div>
+                    
+                    <button class="tab-btn" onclick="resetHealthQuiz()" style="background: none; border: 1px solid var(--border); color: var(--text-secondary); margin: 0; font-size: 0.8rem; padding: 5px 15px;">
+                        <i class="fa-solid fa-rotate-left"></i> <span class="lang-text" data-th="ทำเเบบประเมินใหม่" data-en="Retake Quiz">ทำเเบบประเมินใหม่</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <div class="health-dashboard-grid">
             <!-- Symptom Triage Box -->
             <div class="symptom-card">
