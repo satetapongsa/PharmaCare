@@ -368,6 +368,57 @@
                 <button class="add-to-cart-btn" onclick="openVaccineBooking('วัคซีนโรคปอดอักเสบ / Pneumococcal Pneumonia Vaccine', 3200)" style="width:100%; justify-content:center;"><i class="fa-solid fa-calendar-check"></i> <span class="lang-text" data-th="จองวันเวลารับวัคซีน" data-en="Book Appointment">จองวันเวลารับวัคซีน</span></button>
             </div>
         </div>
+
+        <!-- Interactive Clinic Selector Map (Upgrade 17) -->
+        <div style="margin-top: 50px;">
+            <h3 class="section-title"><i class="fa-solid fa-map-location-dot"></i> <span class="lang-text" data-th="โรงพยาบาลและคลินิกเครือข่ายพันธมิตร" data-en="Our Network Partner Clinics">โรงพยาบาลและคลินิกเครือข่ายพันธมิตร</span></h3>
+            <p style="color: var(--text-secondary); margin-bottom: 20px; font-size: 0.9rem;" class="lang-text" data-th="เลือกสาขาเพื่อดูข้อมูลการเปิดทำการ ขอเส้นทางจีพีเอส และระบบจำลองแผนที่นำทางอัจฉริยะ" data-en="Select a branch to view opening hours, request mock GPS directions, and explore our interactive map locator.">เลือกสาขาเพื่อดูข้อมูลการเปิดทำการ ขอเส้นทางจีพีเอส และระบบจำลองแผนที่นำทางอัจฉริยะ</p>
+            
+            <div class="health-dashboard-grid" style="display: grid; grid-template-columns: 1fr 2fr; gap: 30px;">
+                <!-- Card selectors -->
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    <div class="symptom-card clinic-branch-card active" onclick="selectClinicBranch('sukhumvit')" id="branch-card-sukhumvit" style="cursor: pointer; border: 1px solid var(--primary); transition: var(--transition);">
+                        <h4 style="font-weight: 700; color: var(--primary);"><i class="fa-solid fa-hospital"></i> <span class="lang-text" data-th="สาขาสุขุมวิท (กรุงเทพฯ)" data-en="Sukhumvit Branch (Bangkok)">สาขาสุขุมวิท (กรุงเทพฯ)</span></h4>
+                        <p style="font-size: 0.78rem; color: var(--text-secondary); margin-top: 5px;" class="lang-text" data-th="เปิดบริการทุกวัน: 08:00 - 20:00 น." data-en="Daily: 8:00 AM - 8:00 PM">เปิดบริการทุกวัน: 08:00 - 20:00 น.</p>
+                        <span class="badge-dot" style="background: #4ade80; display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px;"></span>
+                        <span style="font-size: 0.72rem; color: #4ade80; font-weight: 600;" class="lang-text" data-th="เปิดทำการปกติ" data-en="Open Now">เปิดทำการปกติ</span>
+                    </div>
+                    <div class="symptom-card clinic-branch-card" onclick="selectClinicBranch('phayathai')" id="branch-card-phayathai" style="cursor: pointer; transition: var(--transition);">
+                        <h4 style="font-weight: 700; color: var(--text-primary);"><i class="fa-solid fa-hospital"></i> <span class="lang-text" data-th="สาขาพญาไท (กรุงเทพฯ)" data-en="Phaya Thai Branch (Bangkok)">สาขาพญาไท (กรุงเทพฯ)</span></h4>
+                        <p style="font-size: 0.78rem; color: var(--text-secondary); margin-top: 5px;" class="lang-text" data-th="เปิดบริการทุกวัน: 09:00 - 18:00 น." data-en="Daily: 9:00 AM - 6:00 PM">เปิดบริการทุกวัน: 09:00 - 18:00 น.</p>
+                        <span class="badge-dot" style="background: #4ade80; display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px;"></span>
+                        <span style="font-size: 0.72rem; color: #4ade80; font-weight: 600;" class="lang-text" data-th="เปิดทำการปกติ" data-en="Open Now">เปิดทำการปกติ</span>
+                    </div>
+                    <div class="symptom-card clinic-branch-card" onclick="selectClinicBranch('chiangmai')" id="branch-card-chiangmai" style="cursor: pointer; transition: var(--transition);">
+                        <h4 style="font-weight: 700; color: var(--text-primary);"><i class="fa-solid fa-hospital"></i> <span class="lang-text" data-th="สาขาเชียงใหม่ (นิมมาน)" data-en="Chiang Mai Branch (Nimman)">สาขาเชียงใหม่ (นิมมาน)</span></h4>
+                        <p style="font-size: 0.78rem; color: var(--text-secondary); margin-top: 5px;" class="lang-text" data-th="เปิดบริการ: จันทร์ - ศุกร์ 09:00 - 17:00 น." data-en="Mon - Fri: 9:00 AM - 5:00 PM">เปิดบริการ: จันทร์ - ศุกร์ 09:00 - 17:00 น.</p>
+                        <span class="badge-dot" style="background: #f59e0b; display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px;"></span>
+                        <span style="font-size: 0.72rem; color: #f59e0b; font-weight: 600;" class="lang-text" data-th="นอกเวลาทำการ" data-en="Closed">นอกเวลาทำการ</span>
+                    </div>
+                </div>
+                
+                <!-- Mock Map visual -->
+                <div class="bmi-card" style="position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; padding: 25px;">
+                    <div>
+                        <h4 style="font-weight: 700; color: var(--primary); font-size: 1.1rem; margin-bottom: 8px;" id="clinic-detail-title">PharmaCare คลินิกสุขุมวิท</h4>
+                        <p style="font-size: 0.85rem; color: var(--text-secondary);" id="clinic-detail-address">เลขที่ 123 ถนนสุขุมวิท แขวงคลองเตย เขตคลองเตย กรุงเทพมหานคร 10110</p>
+                        <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 5px;"><i class="fa-solid fa-phone"></i> <span id="clinic-detail-phone">02-123-4567</span></p>
+                    </div>
+                    
+                    <!-- Beautiful simulated glassmorphic map grid -->
+                    <div style="width: 100%; height: 160px; background: rgba(5, 150, 105, 0.05); border: 1px dashed var(--primary); border-radius: var(--radius-md); margin: 15px 0; display: flex; align-items: center; justify-content: center; position: relative;">
+                        <i class="fa-solid fa-map-location" style="font-size: 3rem; color: var(--primary); opacity: 0.3;"></i>
+                        <!-- Crosshair pulsing -->
+                        <div style="position: absolute; width: 16px; height: 16px; border-radius: 50%; background: var(--secondary); border: 3px solid white; box-shadow: 0 0 10px var(--secondary); animation: pulse 1.5s infinite;"></div>
+                        <span style="position: absolute; bottom: 10px; right: 10px; background: rgba(0,0,0,0.6); color: white; padding: 2px 8px; border-radius: var(--radius-sm); font-size: 0.65rem; font-weight: 600;">GPS Active</span>
+                    </div>
+                    
+                    <button class="tab-btn" onclick="getClinicDirections()" style="background: var(--primary); color: white; border: none; margin: 0; width: 100%; display: flex; justify-content: center; align-items: center; gap: 8px; height: 40px;">
+                        <i class="fa-solid fa-compass"></i> <span class="lang-text" data-th="ขอเส้นทางจัดแผนการเดินทาง" data-en="Get Navigation Directions">ขอเส้นทางจัดแผนการเดินทาง</span>
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- 4. ACCOUNT DASHBOARD VIEW (แดชบอร์ดค่าใช้จ่าย + ติดตามพัสดุ + สมาชิกสะสมแต้ม) -->

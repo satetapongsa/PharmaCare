@@ -2527,3 +2527,73 @@ window.shareProductLink = function(productId) {
         );
     });
 };
+
+// Upgrade 17: Interactive Clinics Location Map Selector
+const clinicBranches = {
+    sukhumvit: {
+        title_th: "PharmaCare คลินิกสุขุมวิท",
+        title_en: "PharmaCare Sukhumvit Clinic",
+        address_th: "เลขที่ 123 ถนนสุขุมวิท แขวงคลองเตย เขตคลองเตย กรุงเทพมหานคร 10110",
+        address_en: "123 Sukhumvit Road, Khlong Toei, Bangkok 10110",
+        phone: "02-123-4567"
+    },
+    phayathai: {
+        title_th: "PharmaCare คลินิกพญาไท",
+        title_en: "PharmaCare Phaya Thai Clinic",
+        address_th: "เลขที่ 45/9 ถนนพญาไท แขวงถนนพญาไท เขตราชเทวี กรุงเทพมหานคร 10400",
+        address_en: "45/9 Phaya Thai Road, Ratchathewi, Bangkok 10400",
+        phone: "02-987-6543"
+    },
+    chiangmai: {
+        title_th: "PharmaCare คลินิกเชียงใหม่",
+        title_en: "PharmaCare Chiang Mai Clinic",
+        address_th: "เลขที่ 99 ถนนนิมมานเหมินท์ ตำบลสุเทพ อำเภอเมือง เชียงใหม่ 50200",
+        address_en: "99 Nimmanhemin Road, Suthep, Chiang Mai 50200",
+        phone: "053-222-111"
+    }
+};
+
+let activeClinicBranch = "sukhumvit";
+
+window.selectClinicBranch = function(branch) {
+    playSound("click");
+    activeClinicBranch = branch;
+    
+    // Toggle active card
+    document.querySelectorAll(".clinic-branch-card").forEach(card => {
+        card.classList.remove("active");
+        card.style.borderColor = "var(--border)";
+        const titleText = card.querySelector("h4");
+        if (titleText) titleText.style.color = "var(--text-primary)";
+    });
+    
+    const selectedCard = document.getElementById(`branch-card-${branch}`);
+    if (selectedCard) {
+        selectedCard.classList.add("active");
+        selectedCard.style.borderColor = "var(--primary)";
+        const titleText = selectedCard.querySelector("h4");
+        if (titleText) titleText.style.color = "var(--primary)";
+    }
+    
+    // Update detail text
+    const titleEl = document.getElementById("clinic-detail-title");
+    const addressEl = document.getElementById("clinic-detail-address");
+    const phoneEl = document.getElementById("clinic-detail-phone");
+    
+    const info = clinicBranches[branch];
+    if (info) {
+        titleEl.textContent = currentLang === "th" ? info.title_th : info.title_en;
+        addressEl.textContent = currentLang === "th" ? info.address_th : info.address_en;
+        phoneEl.textContent = info.phone;
+    }
+};
+
+window.getClinicDirections = function() {
+    playSound("success");
+    const branchName = clinicBranches[activeClinicBranch][currentLang === "th" ? "title_th" : "title_en"];
+    showToast(
+        currentLang === "th"
+            ? `✓ เริ่มระบบจำลองจีพีเอสนำทางไปยัง "${branchName}" สำเร็จ!`
+            : `✓ Starting simulated GPS navigation to "${branchName}"!`
+    );
+};
