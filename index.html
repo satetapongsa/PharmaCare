@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="PharmaCare ร้านขายยาออนไลน์จำลองอันดับหนึ่ง ยาคุณภาพสูง วิตามินเสริมสร้างสุขภาพ และอุปกรณ์ทางการแพทย์ครบวงจร สะอาด ปลอดภัย จัดส่งไว">
+    <title>PharmaCare | ร้านขายยาออนไลน์จำลองระดับพรีเมียม</title>
+    <!-- Google Fonts & Icon sets -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Header / Navbar -->
+    <header class="glass">
+        <div class="container navbar">
+            <a href="#" class="logo nav-link-btn" data-target="home" id="logo-home">
+                <i class="fa-solid fa-house-chimney-medical logo-icon"></i>
+                <span class="logo-text">Pharma<span>Care</span></span>
+            </a>
+            
+            <!-- Main Navigation Links (Desktop) with Formal Medical Icons -->
+            <ul class="nav-links">
+                <li><a href="#" class="nav-link-btn active" data-target="home" id="nav-btn-home"><i class="fa-solid fa-house-medical"></i> หน้าหลัก</a></li>
+                <li><a href="#" class="nav-link-btn" data-target="health" id="nav-btn-health"><i class="fa-solid fa-heart-pulse"></i> วิเคราะห์สุขภาพ</a></li>
+                <li><a href="#" class="nav-link-btn" data-target="vaccine" id="nav-btn-vaccine"><i class="fa-solid fa-syringe"></i> จองวัคซีน</a></li>
+                <li><a href="#" class="nav-link-btn" data-target="dashboard" id="nav-btn-dashboard"><i class="fa-solid fa-gauge-high"></i> แดชบอร์ด</a></li>
+                <li><a href="#" class="nav-link-btn" data-target="about" id="nav-btn-about"><i class="fa-solid fa-circle-info"></i> เกี่ยวกับเรา</a></li>
+                <li><a href="#" class="nav-link-btn" data-target="articles" id="nav-btn-articles"><i class="fa-solid fa-file-medical"></i> บทความ</a></li>
+                <li><a href="#" class="nav-link-btn" data-target="contact" id="nav-btn-contact"><i class="fa-solid fa-envelope"></i> ติดต่อเรา</a></li>
+            </ul>
+            
+            <div class="search-container">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" class="search-input" id="search-box" data-placeholder-th="ค้นหายา สรรพคุณ หรือวิตามิน..." data-placeholder-en="Search medicine, benefits, or vitamins..." placeholder="ค้นหายา สรรพคุณ หรือวิตามิน...">
+            </div>
+            
+            <div class="nav-actions">
+                <!-- 1. Language Toggle Button -->
+                <button class="action-btn" id="lang-toggle-btn" title="เปลี่ยนภาษา / Switch Language" style="font-size: 0.8rem; font-weight: 700;">EN</button>
+                
+                <!-- 2. Dark/Light Theme Toggle Button -->
+                <button class="action-btn" id="theme-toggle-btn" title="เปลี่ยนโหมดสี / Toggle Theme">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+                
+                <!-- Wishlist view toggle button -->
+                <button class="action-btn" id="open-wishlist-btn" title="รายการโปรด">
+                    <i class="fa-solid fa-heart"></i>
+                </button>
+                
+                <button class="action-btn" id="open-cart-btn" title="ดูตะกร้าสินค้า">
+                    <i class="fa-solid fa-basket-shopping"></i>
+                    <span class="cart-count" id="cart-count">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Bottom Navigation (Mobile Friendly) -->
+    <nav class="mobile-nav">
+        <a href="#" class="mobile-nav-item active" data-target="home">
+            <i class="fa-solid fa-house-medical"></i>
+            <span class="lang-text" data-th="หน้าหลัก" data-en="Home">หน้าหลัก</span>
+        </a>
+        <a href="#" class="mobile-nav-item" data-target="health">
+            <i class="fa-solid fa-heart-pulse"></i>
+            <span class="lang-text" data-th="ประเมินโรค" data-en="Health">ประเมินโรค</span>
+        </a>
+        <a href="#" class="mobile-nav-item" data-target="vaccine">
+            <i class="fa-solid fa-syringe"></i>
+            <span class="lang-text" data-th="จองวัคซีน" data-en="Vaccine">จองวัคซีน</span>
+        </a>
+        <a href="#" class="mobile-nav-item" data-target="dashboard">
+            <i class="fa-solid fa-gauge-high"></i>
+            <span class="lang-text" data-th="แดชบอร์ด" data-en="Dashboard">แดชบอร์ด</span>
+        </a>
+    </nav>
+
+    <!-- Overlay backdrop -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Drug Allergy Warning Floating Bar (EHR Alert placeholder) -->
+    <div class="container" id="allergy-alert-container" style="margin-top: 20px; display: none;">
+        <div class="allergy-alert-card">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <div>
+                <h4 id="allergy-alert-title">ระวัง! ระบบตรวจพบข้อพึงระวังด้านยาแพ้สะสม</h4>
+                <p id="allergy-alert-desc">คุณได้เลือกประวัติแพ้ยาในระบบไว้ ยาบางตัวที่แพ้จะถูกบล็อกไม่ให้เพิ่มลงในตะกร้าเพื่อความปลอดภัยสูงสุดของคุณ</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 1. HOME VIEW (หน้าหลักสินค้า) -->
+    <div id="home-view" class="view-section">
+        <!-- Hero Section -->
+        <section class="hero container">
+            <div class="hero-card">
+                <div class="hero-bg"></div>
+                <div class="hero-content">
+                    <span class="hero-badge" id="hero-badge-txt"><i class="fa-solid fa-globe"></i> ร้านยาจำลองระดับสากล</span>
+                    <h1 class="hero-title" id="hero-title-txt">ดูแลสุขภาพคุณและคนที่คุณรักในทุกๆ วัน</h1>
+                    <p class="hero-desc" id="hero-desc-txt">เราคัดสรรยา วิตามินบำรุง และอุปกรณ์ทางการแพทย์ที่ได้มาตรฐาน ปลอดภัย พร้อมบริการให้คำแนะนำและจัดส่งที่รวดเร็วทันใจ</p>
+                    <div class="hero-stats">
+                        <div class="stat-item">
+                            <h3>100%</h3>
+                            <p class="lang-text" data-th="ของแท้ได้มาตรฐาน" data-en="Certified Original">ของแท้ได้มาตรฐาน</p>
+                        </div>
+                        <div class="stat-item">
+                            <h3>24 ชม.</h3>
+                            <p class="lang-text" data-th="ปรึกษาเภสัชกรออนไลน์" data-en="24/7 Pharmacist">ปรึกษาเภสัชกรออนไลน์</p>
+                        </div>
+                        <div class="stat-item">
+                            <h3 class="lang-text" data-th="จัดส่งฟรี" data-en="Free Ship">จัดส่งฟรี</h3>
+                            <p class="lang-text" data-th="เมื่อซื้อครบ 500 บาท" data-en="Orders over 500฿">เมื่อซื้อครบ 500 บาท</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Category Selector Section -->
+        <section class="categories-section container">
+            <div class="category-tabs" id="category-tabs">
+                <button class="tab-btn active" data-category="all" id="tab-all"><i class="fa-solid fa-border-all"></i> ทั้งหมด</button>
+                <button class="tab-btn" data-category="ยาสามัญ" id="tab-med"><i class="fa-solid fa-capsules"></i> ยาสามัญประจำบ้าน</button>
+                <button class="tab-btn" data-category="อาหารเสริม" id="tab-supp"><i class="fa-solid fa-prescription-bottle"></i> วิตามินและอาหารเสริม</button>
+                <button class="tab-btn" data-category="อุปกรณ์แพทย์" id="tab-equip"><i class="fa-solid fa-stethoscope"></i> อุปกรณ์การแพทย์</button>
+                <button class="tab-btn" data-category="เวชสำอาง" id="tab-skin"><i class="fa-solid fa-pump-medical"></i> เวชสำอางและสกินแคร์</button>
+            </div>
+        </section>
+
+        <!-- Products Grid Section -->
+        <main class="products-section container">
+            <div class="section-header">
+                <h2 class="section-title" id="products-heading"><i class="fa-solid fa-star"></i> รายการยาสินค้าแนะนำ</h2>
+                
+                <!-- Product Compare trigger bar -->
+                <button class="tab-btn" id="trigger-compare-btn" style="background: var(--primary); color: white; border: none; display: none;">
+                    <i class="fa-solid fa-scale-balanced"></i> เปรียบเทียบสินค้า (<span id="compare-count-badge">0</span>)
+                </button>
+            </div>
+            
+            <div class="products-grid" id="products-grid">
+                <!-- Products dynamically loaded -->
+            </div>
+        </main>
+    </div>
+
+    <!-- 2. HEALTH & DIAGNOSIS VIEW (วิเคราะห์สุขภาพ + BMI + ประวัติแพ้ยา) -->
+    <div id="health-view" class="view-section hidden container" style="margin-bottom: 80px;">
+        <div style="text-align: center; max-width: 600px; margin: 30px auto 40px;">
+            <span class="hero-badge"><i class="fa-solid fa-laptop-medical"></i> Health Diagnostic Center</span>
+            <h2 class="section-title" style="display: inline-block; margin-top: 10px;" id="health-title">ระบบวิเคราะห์และคัดกรองสุขภาพสากล</h2>
+            <p style="color: var(--text-secondary); margin-top: 10px;" id="health-desc">ประเมินดัชนีมวลกาย BMI ตรวจวิเคราะห์ประวัติอาการป่วย และบันทึกข้อมูลอาการแพ้ยาของคุณเพื่อความปลอดภัย</p>
+        </div>
+
+        <!-- EHR Allergy record section -->
+        <div class="ehr-card">
+            <h3 style="font-weight: 700; color: var(--primary); font-size: 1.15rem; margin-bottom: 8px;">
+                <i class="fa-solid fa-id-card-clip"></i> ข้อมูลประวัติแพ้ยาอิเล็กทรอนิกส์ (EHR - Drug Allergy Record)
+            </h3>
+            <p style="font-size: 0.85rem; color: var(--text-secondary);"><i class="fa-solid fa-shield-virus"></i> โปรดเลือกประวัติแพ้ยาของคุณ ระบบอัจฉริยะจะสกัดกั้นการเพิ่มยาที่มีความเสี่ยงสะสมลงในตะกร้าเพื่อปกป้องคุณจากการแพ้ยารุนแรง</p>
+            
+            <div class="allergy-checkbox-grid">
+                <label class="allergy-checkbox-label">
+                    <input type="checkbox" class="allergy-chk" value="พาราเซตามอล">
+                    <span><i class="fa-solid fa-capsules"></i> แพ้ยาพาราเซตามอล (Paracetamol)</span>
+                </label>
+                <label class="allergy-checkbox-label">
+                    <input type="checkbox" class="allergy-chk" value="อาหารทะเล">
+                    <span><i class="fa-solid fa-fish"></i> แพ้อาหารทะเล / คอลลาเจนปลา</span>
+                </label>
+                <label class="allergy-checkbox-label">
+                    <input type="checkbox" class="allergy-chk" value="สารเคมีผิวบาง">
+                    <span><i class="fa-solid fa-sun"></i> แพ้สารเคมีในครีมกันแดด</span>
+                </label>
+            </div>
+        </div>
+
+        <div class="health-dashboard-grid">
+            <!-- Symptom Triage Box -->
+            <div class="symptom-card">
+                <h3 style="font-weight: 700; color: var(--primary); font-size: 1.15rem; margin-bottom: 8px;">
+                    <i class="fa-solid fa-hand-holding-heart"></i> วิเคราะห์คัดกรองโรคเบื้องต้น (Symptom Checker)
+                </h3>
+                <p style="font-size: 0.85rem; color: var(--text-secondary);">ระบุกลุ่มอาการเจ็บป่วยหลักของคุณในด้านล่างเพื่อรับคำวินิจฉัยและกลุ่มยาที่เภสัชกรแนะนำ</p>
+                
+                <div class="symptom-selector" id="symptom-selector">
+                    <button class="symptom-chip" data-symptom="headache"><i class="fa-solid fa-temperature-three-quarters"></i> ปวดหัว / มีไข้</button>
+                    <button class="symptom-chip" data-symptom="throat"><i class="fa-solid fa-head-side-cough"></i> ไอ / เจ็บระคายคอ</button>
+                    <button class="symptom-chip" data-symptom="eye"><i class="fa-solid fa-eye"></i> ตาแห้ง / ระคายเคืองตา</button>
+                    <button class="symptom-chip" data-symptom="skin"><i class="fa-solid fa-hand-dots"></i> ผิวแพ้ง่าย / ไหม้แดด</button>
+                </div>
+
+                <div class="diagnosis-box" id="diagnosis-result">
+                    <!-- Rendered Diagnoses -->
+                </div>
+            </div>
+
+            <!-- BMI Calculator -->
+            <div class="bmi-card">
+                <h3 style="font-weight: 700; color: var(--primary); font-size: 1.15rem; margin-bottom: 8px;">
+                    <i class="fa-solid fa-calculator"></i> เครื่องคิดเลขดัชนีมวลกาย (BMI Calculator)
+                </h3>
+                <p style="font-size: 0.85rem; color: var(--text-secondary);">วิเคราะห์สุขภาพน้ำหนักตามเกณฑ์มาตรฐานสากลเพื่อรับโภชนาการที่คู่ควร</p>
+                
+                <form id="bmi-calc-form" style="margin-top: 15px;">
+                    <div class="bmi-form">
+                        <div class="form-group">
+                            <label for="bmi-weight"><i class="fa-solid fa-weight-scale"></i> น้ำหนักตัว (กก.) *</label>
+                            <input type="number" id="bmi-weight" class="form-input" placeholder="เช่น 65" min="20" max="250" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="bmi-height"><i class="fa-solid fa-ruler-vertical"></i> ส่วนสูง (ซม.) *</label>
+                            <input type="number" id="bmi-height" class="form-input" placeholder="เช่น 170" min="100" max="250" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="send-message-btn" style="width: 100%;"><i class="fa-solid fa-chart-simple"></i> คำนวณและประเมินผล</button>
+                </form>
+
+                <div class="bmi-result-panel" id="bmi-result">
+                    <p style="font-size: 0.85rem; color: var(--text-secondary);">ดัชนีมวลกายของคุณคือ:</p>
+                    <div class="bmi-badge-num" id="bmi-value">22.5</div>
+                    <p style="font-weight: 600; font-size: 0.95rem; margin-top: 5px;" id="bmi-status">น้ำหนักอยู่ในเกณฑ์ปกติ</p>
+                    
+                    <div class="bmi-meter-bg">
+                        <div class="bmi-meter-fill" id="bmi-bar"></div>
+                    </div>
+                    <p style="font-size: 0.78rem; color: var(--text-muted); text-align: left;" id="bmi-advise"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. VACCINE SCHEDULER VIEW (จองคิววัคซีน) -->
+    <div id="vaccine-view" class="view-section hidden container" style="margin-bottom: 80px;">
+        <div style="text-align: center; max-width: 600px; margin: 30px auto 40px;">
+            <span class="hero-badge"><i class="fa-solid fa-syringe"></i> Vaccine Hub & Appointments</span>
+            <h2 class="section-title lang-text" style="display: inline-block; margin-top: 10px;" data-th="จองคิวรับวัคซีนป้องกันโรคล่วงหน้า" data-en="Book Preventive Vaccines in Advance">จองคิวรับวัคซีนป้องกันโรคล่วงหน้า</h2>
+            <p style="color: var(--text-secondary); margin-top: 10px;" class="lang-text" data-th="เลือกจองคิวฉีดวัคซีนจำลอง ณ โรงพยาบาลเครือข่าย เพื่อออกบัตร E-Ticket เข้ารับการฉีดอย่างเป็นระบบ" data-en="Schedule a vaccine shot at our partner clinics to receive a digital E-Appointment Ticket.">เลือกจองคิวฉีดวัคซีนจำลอง ณ โรงพยาบาลเครือข่าย เพื่อออกบัตร E-Ticket เข้ารับการฉีดอย่างเป็นระบบ</p>
+        </div>
+
+        <div class="products-grid">
+            <div class="vaccine-card">
+                <span class="modal-tag" style="background:#e0f2fe; color:#0369a1;"><i class="fa-solid fa-certificate"></i> <span class="lang-text" data-th="แนะนำพิเศษ" data-en="Highly Recommended">แนะนำพิเศษ</span></span>
+                <h3 style="font-weight: 700; font-size: 1.1rem; margin-top: 8px;" class="lang-text" data-th="วัคซีนป้องกันไข้หวัดใหญ่ 4 สายพันธุ์" data-en="Quadrivalent Influenza Vaccine (4 Strains)">วัคซีนป้องกันไข้หวัดใหญ่ 4 สายพันธุ์</h3>
+                <p style="font-size: 0.82rem; color: var(--text-secondary); margin-top: 6px; flex-grow: 1;" class="lang-text" data-th="ป้องกันไข้หวัดใหญ่ชนิด A และ B ที่เปลี่ยนสายพันธุ์ตามฤดูกาล เสริมสร้างเกราะปกป้องปอดของคุณ" data-en="Protects against seasonal influenza strains A and B. Strengthens core pulmonary immunity.">ป้องกันไข้หวัดใหญ่ชนิด A และ B ที่เปลี่ยนสายพันธุ์ตามฤดูกาล เสริมสร้างเกราะปกป้องปอดของคุณ</p>
+                <div class="vaccine-price"><span class="lang-text" data-th="950 บาท" data-en="950 THB">950 บาท</span> <span class="lang-text" data-th="/ เข็ม" data-en="/ Dose">/ เข็ม</span></div>
+                <button class="add-to-cart-btn" onclick="openVaccineBooking('วัคซีนป้องกันไข้หวัดใหญ่ 4 สายพันธุ์ / Quadrivalent Influenza Vaccine', 950)" style="width:100%; justify-content:center;"><i class="fa-solid fa-calendar-check"></i> <span class="lang-text" data-th="จองวันเวลารับวัคซีน" data-en="Book Appointment">จองวันเวลารับวัคซีน</span></button>
+            </div>
+            <div class="vaccine-card">
+                <span class="modal-tag" style="background:#fef2f2; color:#b91c1c;"><i class="fa-solid fa-shield-halved"></i> <span class="lang-text" data-th="ป้องกันมะเร็ง" data-en="Cancer Prevention">ป้องกันมะเร็ง</span></span>
+                <h3 style="font-weight: 700; font-size: 1.1rem; margin-top: 8px;" class="lang-text" data-th="วัคซีนป้องกันมะเร็งปากมดลูก (HPV 9 สายพันธุ์)" data-en="HPV Cervical Cancer Vaccine (9 Strains)">วัคซีนป้องกันมะเร็งปากมดลูก (HPV 9 สายพันธุ์)</h3>
+                <p style="font-size: 0.82rem; color: var(--text-secondary); margin-top: 6px; flex-grow: 1;" class="lang-text" data-th="ปกป้องร่างกายจากไวรัส HPV ครอบคลุม 9 สายพันธุ์สำคัญที่ก่อให้เกิดมะเร็ง" data-en="Shields against 9 high-risk HPV strains that cause cervical and other cancers.">ปกป้องร่างกายจากไวรัส HPV ครอบคลุม 9 สายพันธุ์สำคัญที่ก่อให้เกิดมะเร็ง</p>
+                <div class="vaccine-price"><span class="lang-text" data-th="6,500 บาท" data-en="6,500 THB">6,500 บาท</span> <span class="lang-text" data-th="/ เข็ม" data-en="/ Dose">/ เข็ม</span></div>
+                <button class="add-to-cart-btn" onclick="openVaccineBooking('วัคซีน HPV 9 สายพันธุ์ / HPV 9-Valent Vaccine', 6500)" style="width:100%; justify-content:center;"><i class="fa-solid fa-calendar-check"></i> <span class="lang-text" data-th="จองวันเวลารับวัคซีน" data-en="Book Appointment">จองวันเวลารับวัคซีน</span></button>
+            </div>
+            <div class="vaccine-card">
+                <span class="modal-tag" style="background:#ecfdf5; color:#047857;"><i class="fa-solid fa-person-cane"></i> <span class="lang-text" data-th="ผู้สูงวัย" data-en="Senior Care">ผู้สูงวัย</span></span>
+                <h3 style="font-weight: 700; font-size: 1.1rem; margin-top: 8px;" class="lang-text" data-th="วัคซีนป้องกันโรคปอดอักเสบ (Pneumococcal)" data-en="Pneumococcal Vaccine (Pneumonia)">วัคซีนป้องกันโรคปอดอักเสบ (Pneumococcal)</h3>
+                <p style="font-size: 0.82rem; color: var(--text-secondary); margin-top: 6px; flex-grow: 1;" class="lang-text" data-th="ป้องกันการติดเชื้อแบคทีเรียในกระแสเลือดและปอดอักเสบรุนแรง เหมาะสำหรับผู้สูงวัย" data-en="Protects against invasive pneumococcal bacteremia and acute pneumonia, highly recommended for seniors.">ป้องกันการติดเชื้อแบคทีเรียในกระแสเลือดและปอดอักเสบรุนแรง เหมาะสำหรับผู้สูงวัย</p>
+                <div class="vaccine-price"><span class="lang-text" data-th="3,200 บาท" data-en="3,200 THB">3,200 บาท</span> <span class="lang-text" data-th="/ เข็ม" data-en="/ Dose">/ เข็ม</span></div>
+                <button class="add-to-cart-btn" onclick="openVaccineBooking('วัคซีนโรคปอดอักเสบ / Pneumococcal Pneumonia Vaccine', 3200)" style="width:100%; justify-content:center;"><i class="fa-solid fa-calendar-check"></i> <span class="lang-text" data-th="จองวันเวลารับวัคซีน" data-en="Book Appointment">จองวันเวลารับวัคซีน</span></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. ACCOUNT DASHBOARD VIEW (แดชบอร์ดค่าใช้จ่าย + ติดตามพัสดุ + สมาชิกสะสมแต้ม) -->
+    <div id="dashboard-view" class="view-section hidden container" style="margin-bottom: 80px;">
+        <div style="text-align: center; max-width: 600px; margin: 30px auto 40px;">
+            <span class="hero-badge"><i class="fa-solid fa-user-doctor"></i> Patient Dashboard</span>
+            <h2 class="section-title lang-text" style="display: inline-block; margin-top: 10px;" data-th="แดชบอร์ดข้อมูลสุขภาพและการสั่งซื้อ" data-en="Health & Purchase Dashboard">แดชบอร์ดข้อมูลสุขภาพและการสั่งซื้อ</h2>
+            <p style="color: var(--text-secondary); margin-top: 10px;" class="lang-text" data-th="วิเคราะห์ประวัติยอดสะสมค่าใช้จ่าย ติดตามพัสดุการจัดส่งเวชภัณฑ์ และระดับสิทธิพิเศษสมาชิกของคุณ" data-en="Track your monthly healthcare expenditures, real-time deliveries, and loyalty program tiers.">วิเคราะห์ประวัติยอดสะสมค่าใช้จ่าย ติดตามพัสดุการจัดส่งเวชภัณฑ์ และระดับสิทธิพิเศษสมาชิกของคุณ</p>
+        </div>
+
+        <div class="health-dashboard-grid">
+            <!-- Left panel: Membership and Delivery Tracking -->
+            <div style="display: flex; flex-direction: column; gap: 30px;">
+                <!-- Membership card -->
+                <div class="symptom-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h3 style="font-weight: 700; color: var(--primary); font-size: 1.15rem;">
+                            <i class="fa-solid fa-award"></i> <span class="lang-text" data-th="สมาชิกรักสุขภาพจำลอง (Loyalty Club)" data-en="Healthy Loyalty Club (Simulated)">สมาชิกรักสุขภาพจำลอง (Loyalty Club)</span>
+                        </h3>
+                        <span class="loyalty-badge bronze" id="user-tier-badge">Bronze Member</span>
+                    </div>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary);"><i class="fa-solid fa-wallet"></i> <span class="lang-text" data-th="สิทธิสมาชิกระดับโลกที่จะสะสมแต้มจากการสั่งซื้อเวชภัณฑ์จริง 10 บาท = 1 คะแนน" data-en="Earn world-class reward points on every order. 10 THB spent = 1 Point earned.">สิทธิสมาชิกระดับโลกที่จะสะสมแต้มจากการสั่งซื้อเวชภัณฑ์จริง 10 บาท = 1 คะแนน</span></p>
+                    <div style="margin: 20px 0 10px; display: flex; justify-content: space-between; font-size: 0.9rem;">
+                        <span class="lang-text" data-th="คะแนนสะสมทั้งหมด:" data-en="Total Reward Points:">คะแนนสะสมทั้งหมด:</span>
+                        <strong style="color: var(--primary); font-size: 1.1rem;"><span id="loyalty-points-val">0</span> <span class="lang-text" data-th="คะแนน" data-en="Points">คะแนน</span></strong>
+                    </div>
+                </div>
+
+                <!-- Package delivery tracking -->
+                <div class="symptom-card">
+                    <h3 style="font-weight: 700; color: var(--primary); font-size: 1.15rem; margin-bottom: 8px;">
+                        <i class="fa-solid fa-truck-ramp-box"></i> <span class="lang-text" data-th="ติดตามพัสดุและจัดส่งเวชภัณฑ์ (Delivery Tracker)" data-en="Real-time Delivery Tracker">ติดตามพัสดุและจัดส่งเวชภัณฑ์ (Delivery Tracker)</span>
+                    </h3>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 15px;"><span class="lang-text" data-th="หมายเลขพัสดุล่าสุด:" data-en="Tracking Number:">หมายเลขพัสดุล่าสุด:</span> <strong style="color: var(--secondary);" id="tracker-id-txt">TH000000000000</strong></p>
+                    
+                    <div class="delivery-timeline">
+                        <div class="timeline-step active" id="step-ordered">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-step-content">
+                                <div class="timeline-step-title"><i class="fa-solid fa-file-invoice-dollar"></i> <span class="lang-text" data-th="สั่งซื้อและชำระเงินสำเร็จ" data-en="Order Placed & Payment Confirmed">สั่งซื้อและชำระเงินสำเร็จ</span></div>
+                                <div class="timeline-step-time" id="step-ordered-time"><span class="lang-text" data-th="ยังไม่ได้ทำการสั่งซื้อ" data-en="No orders placed yet">ยังไม่ได้ทำการสั่งซื้อ</span></div>
+                            </div>
+                        </div>
+                        <div class="timeline-step" id="step-packed">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-step-content">
+                                <div class="timeline-step-title"><i class="fa-solid fa-boxes-packing"></i> <span class="lang-text" data-th="เวชภัณฑ์ผ่านการตรวจสอบโดยเภสัชกรและบรรจุกล่อง" data-en="Supplies verified by Pharmacist & Packed">เวชภัณฑ์ผ่านการตรวจสอบโดยเภสัชกรและบรรจุกล่อง</span></div>
+                                <div class="timeline-step-time" id="step-packed-time">-</div>
+                            </div>
+                        </div>
+                        <div class="timeline-step" id="step-shipped">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-step-content">
+                                <div class="timeline-step-title"><i class="fa-solid fa-truck-fast"></i> <span class="lang-text" data-th="พัสดุถูกส่งออกและอยู่ระหว่างการนำจ่าย" data-en="Parcel Shipped & In Transit">พัสดุถูกส่งออกและอยู่ระหว่างการนำจ่าย</span></div>
+                                <div class="timeline-step-time" id="step-shipped-time">-</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right panel: Spend Chart -->
+            <div class="bmi-card">
+                <h3 style="font-weight: 700; color: var(--primary); font-size: 1.15rem; margin-bottom: 8px;">
+                    <i class="fa-solid fa-chart-column"></i> <span class="lang-text" data-th="สถิติรายจ่ายสะสมรักษาสุขภาพ (Health Expenses Chart)" data-en="Health Expenses Accumulation Chart">สถิติรายจ่ายสะสมรักษาสุขภาพ (Health Expenses Chart)</span>
+                </h3>
+                <p style="font-size: 0.85rem; color: var(--text-secondary);" class="lang-text" data-th="แสดงการประเมินยอดสะสมเงินซื้อเวชภัณฑ์-ยาและอาหารเสริมเพื่อสุขภาพรายเดือน" data-en="Visual monthly distribution of medications, vitamins, and healthcare supplies purchases.">แสดงการประเมินยอดสะสมเงินซื้อเวชภัณฑ์-ยาและอาหารเสริมเพื่อสุขภาพรายเดือน</p>
+                
+                <div class="expense-chart-container">
+                    <div class="expense-bar-row">
+                        <span class="expense-month-label lang-text" data-th="มีนาคม" data-en="March">มีนาคม</span>
+                        <div class="expense-bar-outer"><div class="expense-bar-fill" style="width: 45%"></div></div>
+                        <span class="expense-amount-label lang-text" data-th="450 บาท" data-en="450 THB">450 บาท</span>
+                    </div>
+                    <div class="expense-bar-row">
+                        <span class="expense-month-label lang-text" data-th="เมษายน" data-en="April">เมษายน</span>
+                        <div class="expense-bar-outer"><div class="expense-bar-fill" style="width: 80%"></div></div>
+                        <span class="expense-amount-label lang-text" data-th="850 บาท" data-en="850 THB">850 บาท</span>
+                    </div>
+                    <div class="expense-bar-row">
+                        <span class="expense-month-label lang-text" data-th="พฤษภาคม" data-en="May">พฤษภาคม</span>
+                        <div class="expense-bar-outer"><div class="expense-bar-fill" id="expense-current-bar" style="width: 1%"></div></div>
+                        <span class="expense-amount-label lang-text" id="expense-current-lbl" data-th="0 บาท" data-en="0 THB">0 บาท</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. ABOUT VIEW (เกี่ยวกับเรา) -->
+    <div id="about-view" class="view-section hidden container">
+        <div class="about-grid">
+            <div>
+                <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=600&auto=format&fit=crop&q=60" alt="ร้านขายยา PharmaCare" class="about-img">
+            </div>
+            <div>
+                <span class="hero-badge"><i class="fa-solid fa-circle-info"></i> <span class="lang-text" data-th="เกี่ยวกับเรา" data-en="About Us">เกี่ยวกับเรา</span></span>
+                <h2 class="section-title lang-text" style="margin: 15px 0; font-size: 2rem;" data-th="ร้านขายยา PharmaCare ความเชื่อมั่นในทุกการดูแล" data-en="PharmaCare Pharmacy - Trust in Every Care">ร้านขายยา PharmaCare ความเชื่อมั่นในทุกการดูแล</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 15px;" class="lang-text" data-th="PharmaCare เริ่มต้นขึ้นด้วยความตั้งใจที่จะยกระดับบริการร้านขายยาและอุปกรณ์ดูแลสุขภาพของประเทศไทยให้มีความพรีเมียม รวดเร็ว และเข้าถึงง่ายสำหรับทุกคน เราได้รับใบอนุญาตจดทะเบียนสถานประกอบการทางเวชภัณฑ์อย่างถูกต้อง และควบคุมงานโดยคณะเภสัชศาสตร์ที่มีประสบการณ์สูง" data-en="PharmaCare was founded with a profound commitment to elevate Thailand's pharmacy and healthcare equipment services to a premium, fast, and highly accessible level for everyone. We are fully licensed, and all medical products are curated by a highly experienced clinical pharmacy board.">PharmaCare เริ่มต้นขึ้นด้วยความตั้งใจที่จะยกระดับบริการร้านขายยาและอุปกรณ์ดูแลสุขภาพของประเทศไทยให้มีความพรีเมียม รวดเร็ว และเข้าถึงง่ายสำหรับทุกคน เราได้รับใบอนุญาตจดทะเบียนสถานประกอบการทางเวชภัณฑ์อย่างถูกต้อง และควบคุมงานโดยคณะเภสัชศาสตร์ที่มีประสบการณ์สูง</p>
+                <p style="color: var(--text-secondary); margin-bottom: 25px;" class="lang-text" data-th="เราไม่เพียงจำหน่ายยา แต่เราคือพันธมิตรด้านสุขภาพของคุณที่พร้อมให้คำปรึกษาดูแลตลอด 24 ชั่วโมง ผ่านระบบเภสัชกรออนไลน์อัจฉริยะเพื่อให้แน่ใจว่าทุกคนใช้ยาอย่างเหมาะสมและปลอดภัยที่สุด" data-en="We do not just distribute medications; we are your dedicated healthcare partner ready to provide clinical advice 24/7 through our smart online pharmacist chat widget, ensuring everyone uses medications appropriately and with absolute safety.">เราไม่เพียงจำหน่ายยา แต่เราคือพันธมิตรด้านสุขภาพของคุณที่พร้อมให้คำปรึกษาดูแลตลอด 24 ชั่วโมง ผ่านระบบเภสัชกรออนไลน์อัจฉริยะเพื่อให้แน่ใจว่าทุกคนใช้ยาอย่างเหมาะสมและปลอดภัยที่สุด</p>
+                
+                <div class="hero-stats" style="color: var(--text-primary);">
+                    <div class="stat-item">
+                        <h3 style="color: var(--primary);"><span class="lang-text" data-th="20+ ปี" data-en="20+ Years">20+ ปี</span></h3>
+                        <p class="lang-text" data-th="ประสบการณ์บริการ" data-en="Service Experience">ประสบการณ์บริการ</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3 style="color: var(--primary);"><span class="lang-text" data-th="15 สาขา" data-en="15 Branches">15 สาขา</span></h3>
+                        <p class="lang-text" data-th="กรุงเทพฯ และปริมณฑล" data-en="Bangkok & Vicinity">กรุงเทพฯ และปริมณฑล</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <section style="margin-top: 40px; margin-bottom: 60px;">
+            <h3 class="section-title"><i class="fa-solid fa-user-doctor"></i> <span class="lang-text" data-th="ทีมเภสัชกรวิชาชีพของเรา" data-en="Our Professional Pharmacist Team">ทีมเภสัชกรวิชาชีพของเรา</span></h3>
+            <div class="pharmacist-grid">
+                <div class="pharmacist-card">
+                    <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=300&auto=format&fit=crop&q=60" alt="เภสัชกรหญิง สมศรี" class="pharmacist-avatar">
+                    <h4 class="pharmacist-name lang-text" data-th="ภญ. ดร. นลินี รักษ์ดี" data-en="Dr. Nalinee Rakdee, Pharm.D.">ภญ. ดร. นลินี รักษ์ดี</h4>
+                    <p class="pharmacist-role lang-text" data-th="หัวหน้าเภสัชกรฝ่ายจัดการเวชภัณฑ์" data-en="Chief Pharmacist of Clinical Supplies">หัวหน้าเภสัชกรฝ่ายจัดการเวชภัณฑ์</p>
+                    <p class="pharmacist-cert"><i class="fa-solid fa-address-card"></i> <span class="lang-text" data-th="ใบอนุญาตประกอบวิชาชีพ เลขที่ ภ.12345" data-en="License No. Ph.12345">ใบอนุญาตประกอบวิชาชีพ เลขที่ ภ.12345</span></p>
+                </div>
+                <div class="pharmacist-card">
+                    <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=300&auto=format&fit=crop&q=60" alt="เภสัชกร สมชาย" class="pharmacist-avatar">
+                    <h4 class="pharmacist-name lang-text" data-th="ภก. อานนท์ วงศ์วิวัฒน์" data-en="Anon Wongwiwat, R.Ph.">ภก. อานนท์ วงศ์วิวัฒน์</h4>
+                    <p class="pharmacist-role lang-text" data-th="ผู้เชี่ยวชาญด้านอาหารเสริมและวิตามิน" data-en="Specialist in Supplements & Nutrition">ผู้เชี่ยวชาญด้านอาหารเสริมและวิตามิน</p>
+                    <p class="pharmacist-cert"><i class="fa-solid fa-address-card"></i> <span class="lang-text" data-th="ใบอนุญาตประกอบวิชาชีพ เลขที่ ภ.67890" data-en="License No. Ph.67890">ใบอนุญาตประกอบวิชาชีพ เลขที่ ภ.67890</span></p>
+                </div>
+                <div class="pharmacist-card">
+                    <img src="https://images.unsplash.com/photo-1594824813573-246434de83fb?w=300&auto=format&fit=crop&q=60" alt="เภสัชกรหญิง กัญญา" class="pharmacist-avatar">
+                    <h4 class="pharmacist-name lang-text" data-th="ภญ. ปิยวรรณ แก้วมณี" data-en="Piyawan Kaewmanee, R.Ph.">ภญ. ปิยวรรณ แก้วมณี</h4>
+                    <p class="pharmacist-role lang-text" data-th="เภสัชกรคลินิกดูแลโรคทั่วไป" data-en="Clinical General Medicine Pharmacist">เภสัชกรคลินิกดูแลโรคทั่วไป</p>
+                    <p class="pharmacist-cert"><i class="fa-solid fa-address-card"></i> <span class="lang-text" data-th="ใบอนุญาตประกอบวิชาชีพ เลขที่ ภ.13579" data-en="License No. Ph.13579">ใบอนุญาตประกอบวิชาชีพ เลขที่ ภ.13579</span></p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- 6. ARTICLES VIEW (บทความสุขภาพ) -->
+    <div id="articles-view" class="view-section hidden container">
+        <div style="text-align: center; max-width: 600px; margin: 30px auto 40px;">
+            <span class="hero-badge"><i class="fa-solid fa-book-open-reader"></i> <span class="lang-text" data-th="สาระความรู้สุขภาพ / Articles" data-en="Health Articles & Insights">สาระความรู้สุขภาพ / Articles</span></span>
+            <h2 class="section-title lang-text" style="display: inline-block; margin-top: 10px;" data-th="รอบรู้คู่สุขภาพดีกับ PharmaCare" data-en="Stay Informed & Healthy with PharmaCare">รอบรู้คู่สุขภาพดีกับ PharmaCare</h2>
+            <p style="color: var(--text-secondary); margin-top: 10px;" class="lang-text" data-th="อ่านคำแนะนำ ข้อเสนอแนะในการดูแลร่างกาย ตลอดจนความรู้วิชาการเรื่องยาที่ย่อยง่ายโดยเภสัชกรชั้นนำ" data-en="Read clinical guidance, body nourishment recommendations, and simplified medicine facts curated by top professional pharmacists.">อ่านคำแนะนำ ข้อเสนอแนะในการดูแลร่างกาย ตลอดจนความรู้วิชาการเรื่องยาที่ย่อยง่ายโดยเภสัชกรชั้นนำ</p>
+        </div>
+        
+        <div class="articles-grid" id="articles-container">
+            <!-- Articles -->
+        </div>
+    </div>
+
+    <!-- 7. CONTACT VIEW (ติดต่อเรา) -->
+    <div id="contact-view" class="view-section hidden container">
+        <div style="text-align: center; max-width: 600px; margin: 30px auto 40px;">
+            <span class="hero-badge"><i class="fa-solid fa-headset"></i> <span class="lang-text" data-th="ติดต่อสอบถาม" data-en="Contact Center">ติดต่อสอบถาม</span></span>
+            <h2 class="section-title lang-text" style="display: inline-block; margin-top: 10px;" data-th="เชื่อมต่อกับเราได้ทุกเวลา" data-en="Connect With Us Anytime">เชื่อมต่อกับเราได้ทุกเวลา</h2>
+            <p style="color: var(--text-secondary); margin-top: 10px;" class="lang-text" data-th="มีคำถามเรื่องบริการ ปัญหายาเสียหาย หรือติดต่อขอร่วมงาน ส่งข้อความหาเราได้ทันที" data-en="Have questions about our service, damaged products, or business inquiries? Send us a message instantly.">มีคำถามเรื่องบริการ ปัญหายาเสียหาย หรือติดต่อขอร่วมงาน ส่งข้อความหาเราได้ทันที</p>
+        </div>
+        
+        <div class="contact-grid">
+            <div class="contact-info-card">
+                <h3 style="font-weight: 700; font-size: 1.25rem; color: var(--primary-dark); margin-bottom: 25px;"><i class="fa-solid fa-map-location-dot"></i> <span class="lang-text" data-th="ช่องทางติดต่อหลัก" data-en="Primary Contact Channels">ช่องทางติดต่อหลัก</span></h3>
+                
+                <div class="contact-item-row">
+                    <div class="contact-icon"><i class="fa-solid fa-phone"></i></div>
+                    <div class="contact-text">
+                        <h4 class="lang-text" data-th="สายด่วนบริการลูกค้า" data-en="Customer Support Hotline">สายด่วนบริการลูกค้า</h4>
+                        <p class="lang-text" data-th="02-123-4567 (เปิดตลอด 24 ชั่วโมง)" data-en="02-123-4567 (Open 24 Hours)">02-123-4567 (เปิดตลอด 24 ชั่วโมง)</p>
+                    </div>
+                </div>
+                <div class="contact-item-row">
+                    <div class="contact-icon"><i class="fa-solid fa-envelope"></i></div>
+                    <div class="contact-text">
+                        <h4 class="lang-text" data-th="ติดต่อผ่านอีเมล" data-en="Contact via Email">ติดต่อผ่านอีเมล</h4>
+                        <p>contact@pharmacare.mock</p>
+                    </div>
+                </div>
+                <div class="contact-item-row">
+                    <div class="contact-icon"><i class="fa-solid fa-location-dot"></i></div>
+                    <div class="contact-text">
+                        <h4 class="lang-text" data-th="ที่ตั้งสำนักงานใหญ่" data-en="Headquarters Location">ที่ตั้งสำนักงานใหญ่</h4>
+                        <p class="lang-text" data-th="123 ถนนสุขุมวิท แขวงคลองเตย เขตคลองเตย กรุงเทพมหานคร 10110" data-en="123 Sukhumvit Road, Khlong Toei, Bangkok 10110">123 ถนนสุขุมวิท แขวงคลองเตย เขตคลองเตย กรุงเทพมหานคร 10110</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="contact-form">
+                <h3 style="font-weight: 700; font-size: 1.25rem; color: var(--primary-dark); margin-bottom: 20px;"><i class="fa-solid fa-paper-plane"></i> <span class="lang-text" data-th="ส่งข้อความด่วนหาเรา" data-en="Send Us a Fast Message">ส่งข้อความด่วนหาเรา</span></h3>
+                <form id="contact-message-form">
+                    <div class="form-row-grid">
+                        <div class="form-group">
+                            <label for="c-name" class="lang-text" data-th="ชื่อผู้ติดต่อ *" data-en="Your Name *">ชื่อผู้ติดต่อ *</label>
+                            <input type="text" id="c-name" class="form-input" data-placeholder-th="สมชาย ใจดี" data-placeholder-en="John Doe" placeholder="สมชาย ใจดี" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="c-email" class="lang-text" data-th="อีเมล *" data-en="Your Email *">อีเมล *</label>
+                            <input type="email" id="c-email" class="form-input" data-placeholder-th="somchai@mail.com" data-placeholder-en="johndoe@mail.com" placeholder="somchai@mail.com" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="c-subject" class="lang-text" data-th="หัวเรื่อง *" data-en="Subject *">หัวเรื่อง *</label>
+                        <input type="text" id="c-subject" class="form-input" data-placeholder-th="สอบถามวิธีการรับประทานวิตามิน" data-placeholder-en="Question regarding vitamin doses" placeholder="สอบถามวิธีการรับประทานวิตามิน" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="c-message" class="lang-text" data-th="รายละเอียดข้อความ *" data-en="Message Details *">รายละเอียดข้อความ *</label>
+                        <textarea id="c-message" class="form-textarea" data-placeholder-th="กรุณากรอกคำอธิบายปัญหาหรือข้อสงสัยของคุณที่นี่..." data-placeholder-en="Please describe your symptoms or inquiries here..." placeholder="กรุณากรอกคำอธิบายปัญหาหรือข้อสงสัยของคุณที่นี่..." required></textarea>
+                    </div>
+                    <button type="submit" class="send-message-btn"><i class="fa-solid fa-paper-plane"></i> <span class="lang-text" data-th="ส่งข้อความ" data-en="Send Message">ส่งข้อความ</span></button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 8. WISHLIST VIEW (รายการโปรด) -->
+    <div id="wishlist-view" class="view-section hidden container" style="margin-bottom: 80px;">
+        <div class="section-header">
+            <h2 class="section-title"><i class="fa-solid fa-heart"></i> รายการสินค้าโปรดของคุณ (<span id="wishlist-count-text">0</span> รายการ)</h2>
+        </div>
+        <div class="wishlist-grid" id="wishlist-grid">
+            <!-- Favorited items -->
+        </div>
+    </div>
+
+    <!-- Sliding Cart Drawer -->
+    <div class="cart-drawer" id="cart-drawer">
+        <div class="cart-header">
+            <h2><i class="fa-solid fa-basket-shopping"></i> ตะกร้าสินค้าของคุณ</h2>
+            <button class="close-btn" id="close-cart-btn" aria-label="ปิดตะกร้าสินค้า">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        
+        <div class="cart-items" id="cart-items-container">
+            <!-- Cart items -->
+        </div>
+        
+        <div class="cart-footer">
+            <div class="summary-row">
+                <span>ราคารวมสินค้า:</span>
+                <span id="subtotal-price">0 บาท</span>
+            </div>
+            <div class="summary-row">
+                <span>ค่าบริการจัดส่ง:</span>
+                <span id="shipping-price">0 บาท</span>
+            </div>
+            <div class="summary-row total">
+                <span>ยอดชำระสุทธิ:</span>
+                <span id="total-price">0 บาท</span>
+            </div>
+            <button class="checkout-btn" id="checkout-btn">
+                <i class="fa-solid fa-credit-card"></i> ดำเนินการชำระเงินจำลอง
+            </button>
+        </div>
+    </div>
+
+    <!-- Product Detail Modal -->
+    <div class="modal" id="detail-modal">
+        <button class="modal-close" id="close-modal-btn" aria-label="ปิดรายละเอียด">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <div class="modal-grid" id="modal-content">
+            <!-- Modal details -->
+        </div>
+    </div>
+
+    <!-- Article Detail Modal -->
+    <div class="modal" id="article-detail-modal" style="max-width: 600px;">
+        <button class="modal-close" id="close-article-modal-btn" aria-label="ปิดบทความ">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <div id="article-modal-content" style="padding: 30px; max-height: 80vh; overflow-y: auto;">
+            <!-- Article content -->
+        </div>
+    </div>
+
+    <!-- Product Comparison Modal -->
+    <div class="compare-modal" id="compare-modal">
+        <button class="modal-close" id="close-compare-modal-btn" aria-label="ปิดตารางเปรียบเทียบ">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <div class="compare-modal-body">
+            <h3 class="checkout-modal-title"><i class="fa-solid fa-scale-balanced"></i> เปรียบเทียบสินค้าเคียงข้างกัน (Compare Products)</h3>
+            <div style="overflow-x: auto; margin-top: 15px;">
+                <table class="compare-table" id="compare-table-content">
+                    <!-- Comparison table -->
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vaccine Booking Datepicker Form Modal -->
+    <div class="checkout-modal" id="vaccine-booking-modal" style="max-width: 450px;">
+        <button class="modal-close" id="close-vaccine-modal-btn" aria-label="ปิดหน้าต่างจองวัคซีน">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <div class="checkout-modal-body">
+            <h3 class="checkout-modal-title"><i class="fa-solid fa-calendar-days"></i> <span class="lang-text" data-th="ทำนัดหมายรับวัคซีนป้องกันโรค" data-en="Schedule Vaccine Appointment">ทำนัดหมายรับวัคซีนป้องกันโรค</span></h3>
+            <form id="vaccine-booking-form">
+                <div class="checkout-form-group">
+                    <label for="v-cust-name"><i class="fa-solid fa-user-tag"></i> <span class="lang-text" data-th="ชื่อ - นามสกุล ผู้รับวัคซีน *" data-en="Recipient Full Name *">ชื่อ - นามสกุล ผู้รับวัคซีน *</span></label>
+                    <input type="text" id="v-cust-name" class="checkout-input" data-placeholder-th="สมจิต รักษาสุข" data-placeholder-en="Jane Doe" placeholder="สมจิต รักษาสุข" required>
+                </div>
+                <div class="checkout-form-group">
+                    <label for="v-cust-phone"><i class="fa-solid fa-phone"></i> <span class="lang-text" data-th="เบอร์ติดต่อ *" data-en="Phone Contact *">เบอร์ติดต่อ *</span></label>
+                    <input type="tel" id="v-cust-phone" class="checkout-input" data-placeholder-th="089-123-4567" data-placeholder-en="089-123-4567" placeholder="089-123-4567" required>
+                </div>
+                <div class="checkout-form-group">
+                    <label for="v-select-branch"><i class="fa-solid fa-hospital"></i> <span class="lang-text" data-th="เลือกศูนย์การแพทย์สาขา *" data-en="Select Clinic Branch *">เลือกศูนย์การแพทย์สาขา *</span></label>
+                    <select id="v-select-branch" class="checkout-input" style="cursor:pointer;" required>
+                        <option value="สาขาสุขุมวิท (สำนักงานใหญ่)" class="lang-text" data-th="สาขาสุขุมวิท (สำนักงานใหญ่)" data-en="Sukhumvit Branch (HQ)">สาขาสุขุมวิท (สำนักงานใหญ่)</option>
+                        <option value="สาขาสามย่านมิตรทาวน์" class="lang-text" data-th="สาขาสามย่านมิตรทาวน์" data-en="Samyan Mitrtown Branch">สาขาสามย่านมิตรทาวน์</option>
+                        <option value="สาขาลาดพร้าว 101" class="lang-text" data-th="สาขาลาดพร้าว 101" data-en="Ladprao 101 Branch">สาขาลาดพร้าว 101</option>
+                    </select>
+                </div>
+                <div class="checkout-form-group">
+                    <label for="v-select-date"><i class="fa-solid fa-calendar-day"></i> <span class="lang-text" data-th="เลือกวันที่รับวัคซีน *" data-en="Select Appointment Date *">เลือกวันที่รับวัคซีน *</span></label>
+                    <input type="date" id="v-select-date" class="checkout-input" style="cursor:pointer;" required>
+                </div>
+                <div class="checkout-form-group">
+                    <label for="v-select-time"><i class="fa-solid fa-clock"></i> <span class="lang-text" data-th="เลือกเวลาที่สะดวก *" data-en="Select Convenient Time *">เลือกเวลาที่สะดวก *</span></label>
+                    <select id="v-select-time" class="checkout-input" style="cursor:pointer;" required>
+                        <option value="09:00 - 10:30 น." class="lang-text" data-th="09:00 - 10:30 น." data-en="09:00 AM - 10:30 AM">09:00 - 10:30 น.</option>
+                        <option value="11:00 - 12:30 น." class="lang-text" data-th="11:00 - 12:30 น." data-en="11:00 AM - 12:30 PM">11:00 - 12:30 น.</option>
+                        <option value="14:00 - 15:30 น." class="lang-text" data-th="14:00 - 15:30 น." data-en="02:00 PM - 03:30 PM">14:00 - 15:30 น.</option>
+                    </select>
+                </div>
+                <button type="submit" class="checkout-btn">
+                    <i class="fa-solid fa-ticket"></i> <span class="lang-text" data-th="ยืนยันจองรับบัตร E-Ticket" data-en="Confirm Booking & Get E-Ticket">ยืนยันจองรับบัตร E-Ticket</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Simulated E-Ticket appointment output modal -->
+    <div class="ticket-modal" id="ticket-modal">
+        <div class="ticket-wrapper">
+            <div class="ticket-header-top">
+                <div style="font-weight: 700; font-size: 1rem;"><i class="fa-solid fa-kit-medical" style="color:var(--primary-light);"></i> PHARMACARE VACCINE</div>
+                <div style="font-size:0.7rem; background: rgba(52,211,153,0.2); color:var(--primary-light); padding:2px 8px; border-radius:10px;" id="ticket-tier-lbl">BRONZE</div>
+            </div>
+            
+            <div class="ticket-main-body">
+                <div>
+                    <div class="ticket-label lang-text" data-th="ชื่อผู้รับวัคซีน" data-en="Recipient Name">ชื่อผู้รับวัคซีน</div>
+                    <div class="ticket-value" id="ticket-cust-name">-</div>
+                </div>
+                <div>
+                    <div class="ticket-label lang-text" data-th="ประเภทวัคซีน" data-en="Vaccine Type">ประเภทวัคซีน</div>
+                    <div class="ticket-value" id="ticket-vac-name">-</div>
+                </div>
+                <div>
+                    <div class="ticket-label lang-text" data-th="วันที่รับบริการ" data-en="Appointment Date">วันที่รับบริการ</div>
+                    <div class="ticket-value" id="ticket-date">-</div>
+                </div>
+                <div>
+                    <div class="ticket-label lang-text" data-th="เวลาจองคิว" data-en="Appointment Time">เวลาจองคิว</div>
+                    <div class="ticket-value" id="ticket-time">-</div>
+                </div>
+                <div style="grid-column: span 2;">
+                    <div class="ticket-label lang-text" data-th="ศูนย์การแพทย์สาขา" data-en="Medical Center Branch">ศูนย์การแพทย์สาขา</div>
+                    <div class="ticket-value" id="ticket-branch">-</div>
+                </div>
+            </div>
+            
+            <div class="ticket-divider-line"></div>
+            
+            <div class="ticket-barcode-section">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x60&data=PharmaCareVaccineBooking12345" alt="Barcode นัดหมาย" class="ticket-barcode">
+                <div class="ticket-label" style="margin-top:4px;"><span class="lang-text" data-th="หมายเลขบัตรคิวนัดหมาย:" data-en="Queue Appointment ID:">หมายเลขบัตรคิวนัดหมาย:</span> <span id="ticket-id" style="color:white; font-weight:600;">PCV-0000</span></div>
+            </div>
+            
+            <button class="success-close-btn" id="ticket-close-btn" style="margin-top:20px; width:100%; border:none;"><span class="lang-text" data-th="กลับสู่ศูนย์วัคซีนหลัก" data-en="Back to Vaccine Center">กลับสู่ศูนย์วัคซีนหลัก</span></button>
+        </div>
+    </div>
+
+    <!-- Checkout Modal with Address Form and simulated payment -->
+    <div class="checkout-modal" id="checkout-modal">
+        <button class="modal-close" id="close-checkout-btn" aria-label="ปิดกล่องชำระเงิน">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <div class="checkout-modal-body">
+            <h3 class="checkout-modal-title"><i class="fa-solid fa-truck-fast"></i> <span class="lang-text" data-th="ระบุข้อมูลจัดส่งเพื่อสั่งซื้อสินค้า" data-en="Enter Delivery Details to Purchase">ระบุข้อมูลจัดส่งเพื่อสั่งซื้อสินค้า</span></h3>
+            <form id="shipping-form">
+                <div class="checkout-form-group">
+                    <label for="cust-name" class="lang-text" data-th="ชื่อ - นามสกุล ผู้รับ *" data-en="Recipient Full Name *">ชื่อ - นามสกุล ผู้รับ *</label>
+                    <input type="text" id="cust-name" class="checkout-input" data-placeholder-th="คุณสมจิต รักษาสิทธิ์" data-placeholder-en="John Doe" placeholder="คุณสมจิต รักษาสิทธิ์" required>
+                </div>
+                <div class="checkout-form-group">
+                    <label for="cust-phone" class="lang-text" data-th="เบอร์โทรศัพท์ติดต่อ *" data-en="Phone Contact *">เบอร์โทรศัพท์ติดต่อ *</label>
+                    <input type="tel" id="cust-phone" class="checkout-input" data-placeholder-th="089-123-4567" data-placeholder-en="089-123-4567" placeholder="089-123-4567" required>
+                </div>
+                <div class="checkout-form-group">
+                    <label for="cust-address" class="lang-text" data-th="ที่อยู่จัดส่งโดยละเอียด *" data-en="Detailed Shipping Address *">ที่อยู่จัดส่งโดยละเอียด *</label>
+                    <input type="text" id="cust-address" class="checkout-input" data-placeholder-th="เลขที่ 45/9 หมู่ 2 แขวงพญาไท เขตราชเทวี กรุงเทพมหานคร" data-placeholder-en="45/9 Moo 2 Phayathai Road, Ratchathewi, Bangkok" placeholder="เลขที่ 45/9 หมู่ 2 แขวงพญาไท เขตราชเทวี กรุงเทพมหานคร" required>
+                </div>
+                <div class="checkout-form-group">
+                    <label for="promo-code" class="lang-text" data-th="คูปอง / โค้ดส่วนลด (เช่น HEALTH20, WELCOME100)" data-en="Promo Code (e.g., HEALTH20, WELCOME100)">คูปอง / โค้ดส่วนลด (เช่น HEALTH20, WELCOME100)</label>
+                    <div style="display:flex; gap:10px;">
+                        <input type="text" id="promo-code" class="checkout-input" data-placeholder-th="กรอกโค้ดส่วนลดที่นี่" data-placeholder-en="Enter promo code here" placeholder="กรอกโค้ดส่วนลดที่นี่">
+                        <button type="button" class="tab-btn" id="apply-promo-btn" style="background:var(--primary); color:white; border:none; margin:0;"><span class="lang-text" data-th="ใช้โค้ด" data-en="Apply">ใช้โค้ด</span></button>
+                    </div>
+                    <span id="promo-status-msg" style="font-size:0.75rem; font-weight:600; margin-top:4px; display:block;"></span>
+                </div>
+                
+                <h4 style="font-size: 0.95rem; font-weight: 600; margin: 20px 0 10px;" class="lang-text" data-th="เลือกวิธีการชำระเงิน" data-en="Select Payment Method">เลือกวิธีการชำระเงิน</h4>
+                <div class="payment-methods-grid">
+                    <div class="payment-box selected" id="pay-cod">
+                        <i class="fa-solid fa-hand-holding-dollar"></i>
+                        <span style="font-size: 0.82rem; font-weight: 500;" class="lang-text" data-th="เก็บเงินปลายทาง (COD)" data-en="Cash on Delivery (COD)">เก็บเงินปลายทาง (COD)</span>
+                    </div>
+                    <div class="payment-box" id="pay-qr">
+                        <i class="fa-solid fa-qrcode"></i>
+                        <span style="font-size: 0.82rem; font-weight: 500;" class="lang-text" data-th="สแกนคิวอาร์โอนเงิน" data-en="Scan QR Code Transfer">สแกนคิวอาร์โอนเงิน</span>
+                    </div>
+                </div>
+
+                <!-- PromptPay QR -->
+                <div class="promptpay-container" id="promptpay-section">
+                    <p style="font-size: 0.85rem; font-weight: 600; color: #1e3a8a; margin-bottom: 5px;">Thai QR Payment (PromptPay)</p>
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=PharmaCarePromptPayMockup" alt="QR Code สำหรับโอนเงิน" class="qr-code-img">
+                    <p style="font-size: 0.72rem; color: var(--text-secondary);" class="lang-text" data-th="เมื่อสแกนโอนแล้วระบบจะอนุมัติใบสั่งซื้อทันทีหลังจากกดสั่ง" data-en="Upon successful scan transfer, order will be automatically approved after placement.">เมื่อสแกนโอนแล้วระบบจะอนุมัติใบสั่งซื้อทันทีหลังจากกดสั่ง</p>
+                </div>
+
+                <button type="submit" class="checkout-btn" style="margin-top: 15px;">
+                    <i class="fa-solid fa-clipboard-check"></i> <span class="lang-text" data-th="ยืนยันการสั่งซื้อจำลอง" data-en="Confirm Simulated Order">ยืนยันการสั่งซื้อจำลอง</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Simulated Printable E-Receipt Modal -->
+    <div class="receipt-modal" id="receipt-modal">
+        <div class="receipt-paper">
+            <div class="receipt-header">
+                <i class="fa-solid fa-circle-check"></i>
+                <h2 class="lang-text" data-th="ใบเสร็จการชำระเงินสำเร็จ" data-en="Payment E-Receipt Success">ใบเสร็จการชำระเงินสำเร็จ</h2>
+                <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;" class="lang-text" data-th="บจก. ฟาร์มาแคร์ เฮลท์เซ็นเตอร์ (ไทยแลนด์)" data-en="PharmaCare Health Center (Thailand) Co., Ltd.">บจก. ฟาร์มาแคร์ เฮลท์เซ็นเตอร์ (ไทยแลนด์)</p>
+            </div>
+            
+            <div class="receipt-row">
+                <span class="lang-text" data-th="รหัสใบสั่งซื้อ:" data-en="Order ID:">รหัสใบสั่งซื้อ:</span>
+                <span id="receipt-order-id" style="font-weight: 600;">#PC-000000</span>
+            </div>
+            <div class="receipt-row">
+                <span class="lang-text" data-th="วันที่ออกใบเสร็จ:" data-en="Receipt Date:">วันที่ออกใบเสร็จ:</span>
+                <span id="receipt-date">--/--/----</span>
+            </div>
+            <div class="receipt-row">
+                <span class="lang-text" data-th="ชื่อผู้สั่งซื้อ:" data-en="Customer Name:">ชื่อผู้สั่งซื้อ:</span>
+                <span id="receipt-cust-name" style="font-weight: 600;">-</span>
+            </div>
+            <div class="receipt-row">
+                <span class="lang-text" data-th="ช่องทางชำระเงิน:" data-en="Payment Method:">ช่องทางชำระเงิน:</span>
+                <span id="receipt-pay-method">-</span>
+            </div>
+            <div class="receipt-row">
+                <span class="lang-text" data-th="ที่อยู่จัดส่ง:" data-en="Shipping Address:">ที่อยู่จัดส่ง:</span>
+                <span id="receipt-address" style="text-align: right; max-width: 60%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">-</span>
+            </div>
+
+            <!-- List of items ordered -->
+            <div class="receipt-items-list" id="receipt-items-list">
+                <!-- Loaded Dynamically -->
+            </div>
+
+            <div class="receipt-row">
+                <span class="lang-text" data-th="ค่าบริการจัดส่ง:" data-en="Shipping Fee:">ค่าบริการจัดส่ง:</span>
+                <span id="receipt-shipping">0 บาท</span>
+            </div>
+            <div class="receipt-row" id="receipt-discount-row" style="display:none; color:var(--danger);">
+                <span class="lang-text" data-th="ส่วนลดคูปอง:" data-en="Coupon Discount:">ส่วนลดคูปอง:</span>
+                <span id="receipt-discount">-0 บาท</span>
+            </div>
+            <div class="receipt-row bold" style="margin-top: 5px;">
+                <span class="lang-text" data-th="ยอดรวมสุทธิทั้งสิ้น:" data-en="Grand Total Net:">ยอดรวมสุทธิทั้งสิ้น:</span>
+                <span id="receipt-total" style="color: var(--primary);">0 บาท</span>
+            </div>
+            
+            <div class="receipt-row" style="margin-top: 15px; border-top: 1px dotted var(--border); padding-top: 8px;">
+                <span class="lang-text" data-th="เลขพัสดุสำหรับติดตาม:" data-en="Tracking Delivery ID:">เลขพัสดุสำหรับติดตาม:</span>
+                <span id="receipt-track-num" style="font-weight: 600; color: var(--secondary);">TH000000000000</span>
+            </div>
+
+            <div class="receipt-row" style="margin-top: 5px; border-bottom: 1px dotted var(--border); padding-bottom: 8px;">
+                <span class="lang-text" data-th="คะแนนสะสมที่ได้รับเพิ่ม:" data-en="Reward Points Earned:">คะแนนสะสมที่ได้รับเพิ่ม:</span>
+                <strong style="color: var(--primary);" id="receipt-points-earned">+0 แต้ม</strong>
+            </div>
+
+            <div class="receipt-footer-thanks">
+                <p class="lang-text" data-th="--- ขอบคุณที่เลือกใช้บริการ PharmaCare ---" data-en="--- Thank You for Shopping with PharmaCare ---">--- ขอบคุณที่เลือกใช้บริการ PharmaCare ---</p>
+                <button class="success-close-btn" id="receipt-close-btn" style="margin-top: 20px;"><span class="lang-text" data-th="กลับสู่หน้าร้านหลัก" data-en="Back to Shop">กลับสู่หน้าร้านหลัก</span></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Live Chat with Pharmacist Widget -->
+    <div class="chat-widget" id="chat-widget">
+        <div class="chat-box" id="chat-box">
+            <div class="chat-box-header">
+                <div class="pharmacist-profile-mini">
+                    <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=100&auto=format&fit=crop&q=60" alt="เภสัชกร" class="chat-pharmacist-avatar">
+                    <div>
+                        <div class="chat-bot-title" id="chatbot-name-txt">ภญ. ปิยวรรณ แก้วมณี</div>
+                        <div class="chat-bot-subtitle"><i class="fa-solid fa-circle" style="color: #4ade80; font-size: 0.5rem;"></i> Online Chat Advice</div>
+                    </div>
+                </div>
+                <button class="chat-box-close" id="chat-close" aria-label="ปิดหน้าต่างแชต">
+                    <i class="fa-solid fa-chevron-down"></i>
+                </button>
+            </div>
+            
+            <!-- Message board -->
+            <div class="chat-box-messages" id="chat-messages">
+                <div class="chat-message-bubble bot" id="chatbot-welcome-txt">
+                    สวัสดีค่ะ ดิฉันเภสัชกรหญิง ปิยวรรณ ยินดีให้คำแนะนำปรึกษาเบื้องต้นเรื่องการใช้ยา วิตามิน และอาการป่วยค่ะ พิมพ์ถามชื่อยาสินค้า หรือระบุอาการได้เลยนะคะ 🩺
+                </div>
+            </div>
+            
+            <div class="chat-box-input-area">
+                <input type="text" class="chat-box-input" id="chat-input" placeholder="พิมพ์ข้อความ...">
+                <button class="chat-box-send" id="chat-send-btn" aria-label="ส่งข้อความ">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+        
+        <button class="chat-btn-floating" id="chat-toggle-btn" aria-label="เปิดปรึกษาเภสัชกร">
+            <span class="badge-dot"></span>
+            <i class="fa-solid fa-user-doctor"></i>
+        </button>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <i class="fa-solid fa-circle-check"></i>
+        <span id="toast-message">เพิ่มสินค้าลงในตะกร้าเรียบร้อย!</span>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-grid">
+            <div>
+                <a href="#" class="footer-logo nav-link-btn" data-target="home" id="logo-footer">
+                    <i class="fa-solid fa-house-chimney-medical"></i>
+                    Pharma<span>Care</span>
+                </a>
+                <p class="footer-desc" id="footer-desc-txt">เรามุ่งมั่นให้บริการจัดหาเวชภัณฑ์ ยาสามัญ วิตามิน และการให้คำปรึกษาด้านสุขภาพด้วยมาตรฐานที่ดีที่สุดเพื่อคุณ</p>
+                <div class="footer-payments">
+                    <i class="fa-brands fa-cc-visa"></i>
+                    <i class="fa-brands fa-cc-mastercard"></i>
+                    <i class="fa-solid fa-qrcode"></i>
+                </div>
+            </div>
+            <div>
+                <h3 class="footer-title" id="footer-menu-txt">ลิงก์เมนู</h3>
+                <ul class="footer-links">
+                    <li><a class="nav-link-btn" data-target="home">หน้าหลัก</a></li>
+                    <li><a class="nav-link-btn" data-target="health">วิเคราะห์สุขภาพ</a></li>
+                    <li><a class="nav-link-btn" data-target="vaccine">จองวัคซีน</a></li>
+                    <li><a class="nav-link-btn" data-target="dashboard">แดชบอร์ด</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="footer-title" id="footer-contact-txt">ติดต่อเรา</h3>
+                <ul class="footer-links">
+                    <li><a href="#"><i class="fa-solid fa-phone"></i> 02-123-4567</a></li>
+                    <li><a href="#"><i class="fa-solid fa-envelope"></i> contact@pharmacare.mock</a></li>
+                    <li><a href="#"><i class="fa-solid fa-location-dot"></i> 123 ถนนสุขุมวิท แขวงคลองเตย กรุงเทพฯ</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="container footer-bottom">
+            <div class="footer-copy">&copy; 2026 PharmaCare Co., Ltd. All rights reserved. (ระบบทดสอบจำลองเท่านั้น)</div>
+            <div style="color: #64748b; font-size: 0.8rem;">Designed for visual excellence & premium usability</div>
+        </div>
+    </footer>
+
+    <!-- Javascript Logical Code -->
+    <script src="app.js"></script>
+</body>
+</html>
