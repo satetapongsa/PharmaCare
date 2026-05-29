@@ -228,6 +228,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setupContactForm();
     setupAudioSystem();
     setupCurrencySelector();
+    setupVideoCall();
     
     // Header Scroll Shadow and Back to Top logic (Upgrade 2)
     const backToTopBtn = document.getElementById("back-to-top-btn");
@@ -1881,4 +1882,129 @@ function showToast(message) {
     toastTimeout = setTimeout(() => {
         toast.classList.remove("show");
     }, 3000);
+}
+
+// Upgrade 6: Simulated Pharmacist Live Video Call
+let callTimerInterval;
+let ringToneInterval;
+
+function playRingingSound() {
+    if (isMuted) return;
+    try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc1 = ctx.createOscillator();
+        const osc2 = ctx.createOscillator();
+        const gain = ctx.createGain();
+        
+        osc1.connect(gain);
+        osc2.connect(gain);
+        gain.connect(ctx.destination);
+        
+        osc1.type = "sine";
+        osc1.frequency.setValueAtTime(440, ctx.currentTime);
+        osc2.type = "sine";
+        osc2.frequency.setValueAtTime(480, ctx.currentTime);
+        
+        gain.gain.setValueAtTime(0.05, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.5);
+        
+        osc1.start();
+        osc2.start();
+        osc1.stop(ctx.currentTime + 1.5);
+        osc2.stop(ctx.currentTime + 1.5);
+    } catch(e) {}
+}
+
+function setupVideoCall() {
+    const callBtn = document.getElementById("pharmacist-call-btn");
+    const videoModal = document.getElementById("video-call-modal");
+    const declineBtn = document.getElementById("decline-call-btn");
+    const acceptBtn = document.getElementById("accept-call-btn");
+    const muteBtn = document.getElementById("mute-call-btn");
+    const endBtn = document.getElementById("end-call-btn");
+    
+    const ringingView = document.getElementById("video-ringing-view");
+    const connectedView = document.getElementById("video-connected-view");
+    const callTimerEl = document.getElementById("call-timer");
+    
+    if (!callBtn) return;
+    
+    callBtn.addEventListener("click", () => {
+        // Play click sound
+        playSound("click");
+        
+        // Open modal
+        videoModal.style.display = "flex";
+        ringingView.style.display = "flex";
+        connectedView.style.display = "none";
+        
+        // Start Ringing Sounds
+        playRingingSound();
+        ringToneInterval = setInterval(playRingingSound, 3000);
+    });
+    
+    const stopRinging = () => {
+        if (ringToneInterval) {
+            clearInterval(ringToneInterval);
+            ringToneInterval = null;
+        }
+    };
+    
+    const closeCallModal = () => {
+        stopRinging();
+        if (callTimerInterval) {
+            clearInterval(callTimerInterval);
+            callTimerInterval = null;
+        }
+        videoModal.style.display = "none";
+        playSound("click");
+    };
+    
+    declineBtn.addEventListener("click", closeCallModal);
+    endBtn.addEventListener("click", closeCallModal);
+    
+    acceptBtn.addEventListener("click", () => {
+        stopRinging();
+        playSound("success");
+        
+        ringingView.style.display = "none";
+        connectedView.style.display = "flex";
+        
+        // Start Call Timer
+        let seconds = 0;
+        callTimerEl.textContent = "00:00";
+        if (callTimerInterval) clearInterval(callTimerInterval);
+        
+        callTimerInterval = setInterval(() => {
+            seconds++;
+            const mm = String(Math.floor(seconds / 60)).padStart(2, '0');
+            const ss = String(seconds % 60).padStart(2, '0');
+            callTimerEl.textContent = `${mm}:${ss}`;
+            
+            // Randomly simulate pharmacist advice messages in chat after some seconds
+            if (seconds === 10) {
+                appendChatBubble(
+                    currentLang === "th" 
+                        ? "📝 ใบสรุปคำปรึกษาผ่านวิดีโอคอล: เภสัชกรแนะนำให้ทานยาสามัญตามอาการ พักผ่อนเพิ่มขึ้น และดื่มน้ำอุ่นมากๆ นะคะ" 
+                        : "📝 Video Consultation Summary: Pharmacist recommends general medicine according to symptoms, rest well, and drink plenty of warm water.", 
+                    "bot"
+                );
+            }
+        }, 1000);
+    });
+    
+    let isMutedCall = false;
+    muteBtn.addEventListener("click", () => {
+        isMutedCall = !isMutedCall;
+        const icon = muteBtn.querySelector("i");
+        if (isMutedCall) {
+            muteBtn.style.background = "var(--danger)";
+            icon.className = "fa-solid fa-microphone-slash";
+            showToast(currentLang === "th" ? "ปิดไมโครโฟนเรียบร้อย" : "Microphone Muted");
+        } else {
+            muteBtn.style.background = "rgba(255, 255, 255, 0.15)";
+            icon.className = "fa-solid fa-microphone";
+            showToast(currentLang === "th" ? "เปิดไมโครโฟนเรียบร้อย" : "Microphone Unmuted");
+        }
+    });
 }
