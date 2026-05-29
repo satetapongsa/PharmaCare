@@ -231,6 +231,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setupVideoCall();
     setupPrescriptionScanner();
     setupDeliveryDateCalculator();
+    setupPillScheduler();
     
     // Header Scroll Shadow and Back to Top logic (Upgrade 2)
     const backToTopBtn = document.getElementById("back-to-top-btn");
@@ -2112,4 +2113,131 @@ function setupDeliveryDateCalculator() {
     }
     
     calculateEstimate();
+}
+
+// Upgrade 9: Medication Pill Scheduler
+let pillSchedules = [];
+let lastSignaledMinStr = "";
+
+function setupPillScheduler() {
+    const form = document.getElementById("pill-scheduler-form");
+    const container = document.getElementById("pill-list-container");
+    
+    if (!form || !container) return;
+    
+    // Load from LocalStorage
+    const saved = localStorage.getItem("pharma_pill_schedules");
+    if (saved) {
+        try {
+            pillSchedules = JSON.parse(saved);
+        } catch (e) {
+            pillSchedules = [];
+        }
+    }
+    
+    const renderPills = () => {
+        container.innerHTML = "";
+        if (pillSchedules.length === 0) {
+            container.innerHTML = `
+                <div style="text-align: center; color: var(--text-muted); font-size: 0.8rem; padding: 15px 0;">
+                    <i class="fa-solid fa-hourglass-empty" style="margin-bottom: 5px;"></i><br>
+                    <span class="lang-text" data-th="ไม่มีการนัดหมายทานยาในตาราง" data-en="No pill schedules configured.">ไม่มีการนัดหมายทานยาในตาราง</span>
+                </div>
+            `;
+            return;
+        }
+        
+        pillSchedules.forEach((pill, idx) => {
+            const row = document.createElement("div");
+            row.style.display = "flex";
+            row.style.justify = "space-between";
+            row.style.alignItems = "center";
+            row.style.padding = "8px 12px";
+            row.style.background = "var(--bg-card)";
+            row.style.border = "1px solid var(--border)";
+            row.style.borderRadius = "var(--radius-sm)";
+            row.style.fontSize = "0.8rem";
+            row.style.boxShadow = "var(--shadow-sm)";
+            
+            row.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <i class="fa-solid fa-pills" style="color: var(--primary); font-size: 1rem;"></i>
+                    <div>
+                        <strong style="color: var(--text-primary);">${pill.name}</strong>
+                        <div style="color: var(--text-secondary); font-size: 0.72rem;">${pill.dose} | <i class="fa-regular fa-clock"></i> ${pill.time}</div>
+                    </div>
+                </div>
+                <button class="action-btn" onclick="deletePill(${idx})" style="width: 28px; height: 28px; background: none; border: none; color: var(--danger); cursor: pointer; display: flex; justify-content: center; align-items: center; border-radius: 50%; font-size: 0.8rem; transition: var(--transition);" onmouseover="this.style.background='rgba(239, 68, 68, 0.1)'" onmouseout="this.style.background='none'">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+            `;
+            container.appendChild(row);
+        });
+    };
+    
+    // Global function to delete a pill
+    window.deletePill = (index) => {
+        pillSchedules.splice(index, 1);
+        localStorage.setItem("pharma_pill_schedules", JSON.stringify(pillSchedules));
+        renderPills();
+        playSound("click");
+        showToast(currentLang === "th" ? "ลบรายการเตือนทานยาเเล้ว" : "Removed pill alarm");
+    };
+    
+    form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const nameInput = document.getElementById("sched-pill-name");
+        const doseInput = document.getElementById("sched-pill-dose");
+        const timeInput = document.getElementById("sched-pill-time");
+        
+        const newPill = {
+            name: nameInput.value.trim(),
+            dose: doseInput.value.trim(),
+            time: timeInput.value
+        };
+        
+        pillSchedules.push(newPill);
+        localStorage.setItem("pharma_pill_schedules", JSON.stringify(pillSchedules));
+        
+        nameInput.value = "";
+        doseInput.value = "";
+        timeInput.value = "";
+        
+        renderPills();
+        playSound("success");
+        showToast(currentLang === "th" ? "✓ เพิ่มตารางเวลาเตือนทานยาเเล้ว" : "✓ Added pill alarm reminder");
+    });
+    
+    // Background reminder checker interval
+    setInterval(() => {
+        const now = new Date();
+        const curHH = String(now.getHours()).padStart(2, '0');
+        const curMM = String(now.getMinutes()).padStart(2, '0');
+        const curTimeStr = `${curHH}:${curMM}`;
+        
+        if (curTimeStr !== lastSignaledMinStr) {
+            pillSchedules.forEach(p => {
+                if (p.time === curTimeStr) {
+                    lastSignaledMinStr = curTimeStr;
+                    playSound("success");
+                    
+                    const msgTh = `🔔 ถึงเวลาทานยาของคุณเเล้ว: ${p.name} (${p.dose})`;
+                    const msgEn = `🔔 Time to take your pill: ${p.name} (${p.dose})`;
+                    
+                    // Show a gorgeous alarm popup toast
+                    showToast(currentLang === "th" ? msgTh : msgEn);
+                    
+                    // Push a simulated message to the pharmacist chat automatically
+                    appendChatBubble(
+                        currentLang === "th"
+                            ? `🕒 แจ้งเตือนสุขภาพอัตโนมัติ: ได้เวลาทานยา <strong>${p.name} (${p.dose})</strong> ตามที่คุณกำหนดไว้ในตารางเวลาแล้วนะคะ อย่าลืมทานยาเพื่อสุขภาพที่เเข็งเเรงค่ะ 🩺`
+                            : `🕒 Auto Health Alarm: Time to take your medication <strong>${p.name} (${p.dose})</strong> as configured in your schedule. Take care! 🩺`,
+                        "bot"
+                    );
+                }
+            });
+        }
+    }, 10000);
+    
+    renderPills();
 }

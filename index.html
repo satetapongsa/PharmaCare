@@ -369,6 +369,29 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Medication Scheduler (Upgrade 9) -->
+                <div class="symptom-card" style="margin-top: 10px;">
+                    <h3 style="font-weight: 700; color: var(--primary); font-size: 1.15rem; margin-bottom: 8px;">
+                        <i class="fa-solid fa-clock"></i> <span class="lang-text" data-th="ระบบจัดตารางเวลาทานยา (Medication Pill Scheduler)" data-en="Medication Pill Scheduler">ระบบจัดตารางเวลาทานยา (Medication Pill Scheduler)</span>
+                    </h3>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 15px;"><span class="lang-text" data-th="บันทึกยา เวลา และปริมาณที่ต้องทาน เพื่อช่วยเตือนความจำส่วนบุคคลของคุณ" data-en="Track your pill schedules, dosage, and intake times with automated browser alarms.">บันทึกยา เวลา และปริมาณที่ต้องทาน เพื่อช่วยเตือนความจำส่วนบุคคลของคุณ</span></p>
+                    
+                    <form id="pill-scheduler-form" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <input type="text" id="sched-pill-name" class="checkout-input" data-placeholder-th="ชื่อยา เช่น พาราเซตามอล" data-placeholder-en="Pill name e.g., Paracetamol" placeholder="ชื่อยา เช่น พาราเซตามอล" required style="padding: 8px 12px; font-size: 0.85rem;">
+                            <input type="text" id="sched-pill-dose" class="checkout-input" data-placeholder-th="ปริมาณ เช่น 1 เม็ด" data-placeholder-en="Dosage e.g., 1 Pill" placeholder="ปริมาณ เช่น 1 เม็ด" required style="padding: 8px 12px; font-size: 0.85rem;">
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center;">
+                            <input type="time" id="sched-pill-time" class="checkout-input" required style="padding: 8px 12px; font-size: 0.85rem; height: 38px;">
+                            <button type="submit" class="tab-btn" style="background: var(--primary); color: white; border: none; margin: 0; padding: 0 20px; height: 38px;"><span class="lang-text" data-th="เพิ่มรายการ" data-en="Add Pill">เพิ่มรายการ</span></button>
+                        </div>
+                    </form>
+                    
+                    <div id="pill-list-container" style="display: flex; flex-direction: column; gap: 8px; max-height: 180px; overflow-y: auto;">
+                        <!-- Dynamically loaded pill schedules -->
+                    </div>
+                </div>
             </div>
 
             <!-- Right panel: Spend Chart -->
