@@ -92,6 +92,7 @@ let monthlyExpense = 0;
 let activeCategory = "all";
 let searchQuery = "";
 let searchHistory = [];
+let isMuted = false;
 
 // Elements lookup
 const productsGrid = document.getElementById("products-grid");
@@ -203,6 +204,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setupCheckoutFlow();
     setupChatbot();
     setupContactForm();
+    setupAudioSystem();
     
     // Header Scroll Shadow and Back to Top logic (Upgrade 2)
     const backToTopBtn = document.getElementById("back-to-top-btn");
@@ -365,6 +367,85 @@ function renderSearchHistoryTags() {
         });
         container.appendChild(tag);
     });
+}
+
+function playSound(type) {
+    if (isMuted) return;
+    try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        
+        if (type === "click") {
+            osc.type = "sine";
+            osc.frequency.setValueAtTime(600, ctx.currentTime);
+            gain.gain.setValueAtTime(0.04, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+            osc.start();
+            osc.stop(ctx.currentTime + 0.08);
+        } else if (type === "cart") {
+            osc.type = "sine";
+            osc.frequency.setValueAtTime(880, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.12);
+            gain.gain.setValueAtTime(0.03, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+            osc.start();
+            osc.stop(ctx.currentTime + 0.15);
+        } else if (type === "success") {
+            const now = ctx.currentTime;
+            osc.type = "sine";
+            gain.gain.setValueAtTime(0.04, now);
+            osc.frequency.setValueAtTime(523.25, now); // C5
+            osc.frequency.setValueAtTime(659.25, now + 0.08); // E5
+            osc.frequency.setValueAtTime(783.99, now + 0.16); // G5
+            osc.frequency.setValueAtTime(1046.50, now + 0.24); // C6
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+            osc.start();
+            osc.stop(now + 0.45);
+        }
+    } catch (e) {
+        console.warn("Web Audio API not supported or allowed yet.");
+    }
+}
+
+function setupAudioSystem() {
+    const soundToggleBtn = document.getElementById("sound-toggle-btn");
+    if (!soundToggleBtn) return;
+    
+    // Load setting from localStorage
+    const saved = localStorage.getItem("pc_audio_muted");
+    isMuted = saved === "true";
+    updateSoundToggleButtonUI();
+    
+    soundToggleBtn.addEventListener("click", () => {
+        isMuted = !isMuted;
+        localStorage.setItem("pc_audio_muted", isMuted);
+        updateSoundToggleButtonUI();
+        if (!isMuted) playSound("click");
+    });
+    
+    // Add generic click sound listeners to interactive elements
+    document.addEventListener("click", (e) => {
+        const target = e.target.closest("button, a, .tab-btn, .symptom-chip, .allergy-checkbox-label");
+        if (target) {
+            playSound("click");
+        }
+    });
+}
+
+function updateSoundToggleButtonUI() {
+    const soundToggleBtn = document.getElementById("sound-toggle-btn");
+    if (!soundToggleBtn) return;
+    const icon = soundToggleBtn.querySelector("i");
+    if (isMuted) {
+        icon.className = "fa-solid fa-volume-xmark";
+        soundToggleBtn.title = currentLang === "th" ? "เปิดเสียง" : "Unmute Sound";
+    } else {
+        icon.className = "fa-solid fa-volume-high";
+        soundToggleBtn.title = currentLang === "th" ? "ปิดเสียง" : "Mute Sound";
+    }
 }
 
     document.querySelectorAll("#category-tabs .tab-btn").forEach(btn => {
@@ -1168,6 +1249,7 @@ function setupCheckoutFlow() {
         
         // Trigger simulated Checkout Confetti particle fireworks!
         triggerConfettiFireworks();
+        playSound("success");
     });
     
     receiptCloseBtn.addEventListener("click", () => {
@@ -1246,6 +1328,7 @@ window.addToCart = function(productId) {
     
     updateCartUI();
     saveCartToStorage();
+    playSound("cart");
     showToast(currentLang === "th" ? `เพิ่ม "${product.name.split(' ')[0]}" ลงตะกร้าแล้ว!` : `Added "${product.name.split(' ')[0]}" to Cart!`);
     
     cartCountBadge.style.animation = 'none';
