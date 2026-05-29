@@ -1681,9 +1681,12 @@ window.openProductDetail = function(productId) {
                 </div>
             </div>
             
-            <div class="modal-footer" style="margin-top: 10px;">
-                <button class="modal-btn" onclick="addToCart(${product.id}); closeModal();">
+            <div class="modal-footer" style="margin-top: 10px; display: flex; gap: 10px;">
+                <button class="modal-btn" onclick="addToCart(${product.id}); closeModal();" style="flex-grow: 1;">
                     <i class="fa-solid fa-cart-plus"></i> ${currentLang === "th" ? "เพิ่มลงตะกร้า" : "Add to Cart"}
+                </button>
+                <button class="modal-btn" onclick="shareProductLink(${product.id})" style="background: rgba(14, 165, 233, 0.1); border: 1px solid var(--secondary); color: var(--secondary); width: auto; padding: 0 16px;">
+                    <i class="fa-solid fa-share-nodes"></i> ${currentLang === "th" ? "แชร์สินค้า" : "Share"}
                 </button>
             </div>
         </div>
@@ -2471,3 +2474,23 @@ function handleCartReservationTimer() {
         }
     }, 1000);
 }
+
+// Upgrade 15: Social Share Product Button
+window.shareProductLink = function(productId) {
+    const activeList = products[currentLang];
+    const product = activeList.find(p => p.id === productId);
+    if (!product) return;
+    
+    // Copy fake URL to clipboard
+    const cleanName = product.name.split(' ')[0].toLowerCase();
+    const fakeUrl = `https://pharmacare.mock/product/${cleanName}`;
+    
+    navigator.clipboard.writeText(fakeUrl).then(() => {
+        playSound("success");
+        showToast(
+            currentLang === "th"
+                ? `✓ คัดลอกลิงก์ของ "${product.name.split(' ')[0]}" สำหรับแชร์เรียบร้อย!`
+                : `✓ Copied "${product.name.split(' ')[0]}" link to clipboard for sharing!`
+        );
+    });
+};
