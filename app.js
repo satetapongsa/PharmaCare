@@ -204,7 +204,9 @@ document.addEventListener("DOMContentLoaded", () => {
     setupChatbot();
     setupContactForm();
     
-    // Header Scroll Shadow logic
+    // Header Scroll Shadow and Back to Top logic (Upgrade 2)
+    const backToTopBtn = document.getElementById("back-to-top-btn");
+    
     window.addEventListener("scroll", () => {
         const header = document.querySelector("header");
         if (window.scrollY > 40) {
@@ -212,7 +214,22 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
             header.classList.remove("scrolled");
         }
+        
+        // Show or hide Back to Top button on scroll
+        if (backToTopBtn) {
+            if (window.scrollY > 300) {
+                backToTopBtn.style.display = "flex";
+            } else {
+                backToTopBtn.style.display = "none";
+            }
+        }
     });
+    
+    if (backToTopBtn) {
+        backToTopBtn.addEventListener("click", () => {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+    }
 });
 
 // Setup Multi-View SPA router

@@ -2665,4 +2665,39 @@ footer {
     opacity: 0.8;
 }
 
+/* Upgrade 2: Back to Top Floating Button styling */
+.back-to-top {
+    background: var(--bg-surface) !important;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid var(--border) !important;
+    border-radius: 50% !important;
+    width: 48px !important;
+    height: 48px !important;
+    box-shadow: var(--shadow-md) !important;
+    transition: var(--transition) !important;
+    cursor: pointer !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    color: var(--primary) !important;
+}
+
+.back-to-top:hover {
+    background: var(--primary) !important;
+    color: white !important;
+    border-color: var(--primary) !important;
+    transform: translateY(-5px) !important;
+    box-shadow: var(--shadow-lg) !important;
+}
+
+@media (max-width: 1200px) {
+    .back-to-top {
+        bottom: 90px !important; /* Stand higher on mobile to clear bottom navigation bar */
+        right: 20px !important;
+        width: 42px !important;
+        height: 42px !important;
+    }
+}
+
 
