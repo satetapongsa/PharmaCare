@@ -26,6 +26,27 @@ const products = {
     ]
 };
 
+// Upgrade 4: Dynamic stock values configuration
+const stockMap = {
+    1: 12, // Paracetamol
+    2: 15, // Vitamin C
+    3: 4,  // Lozenges (Low Stock!)
+    4: 20, // Hand Gel
+    5: 3,  // Surgical Mask (Low Stock!)
+    6: 10, // Cough Syrup
+    7: 18, // Normal Saline
+    8: 5,  // Artificial Tears (Low Stock!)
+    9: 2,  // Collagen (Low Stock!)
+    10: 8  // Sunscreen
+};
+
+// Seed stock values in products database
+Object.keys(products).forEach(lang => {
+    products[lang].forEach(prod => {
+        prod.stock = stockMap[prod.id] || 10;
+    });
+});
+
 // 10 Premium Articles Database with Bilingual support
 const articles = [
     {
@@ -567,6 +588,30 @@ function renderActiveProducts() {
             `;
         }
         
+        // Dynamic stock status indicators (Upgrade 4)
+        let stockHtml = "";
+        const isOutOfStock = product.stock <= 0;
+        
+        if (isOutOfStock) {
+            stockHtml = `
+                <div style="font-size: 0.72rem; color: var(--danger); font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 4px;">
+                    <i class="fa-solid fa-circle-xmark"></i> ${currentLang === "th" ? "สินค้าหมดคลังชั่วคราว" : "Temporarily Out of Stock"}
+                </div>
+            `;
+        } else if (product.stock <= 5) {
+            stockHtml = `
+                <div style="font-size: 0.72rem; color: #d97706; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 4px; animation: pulse 1.5s infinite alternate;">
+                    <i class="fa-solid fa-triangle-exclamation"></i> ${currentLang === "th" ? `เหลือเพียง ${product.stock} ชิ้นสุดท้าย!` : `Only ${product.stock} left in stock!`}
+                </div>
+            `;
+        } else {
+            stockHtml = `
+                <div style="font-size: 0.72rem; color: var(--text-muted); margin-bottom: 8px; display: flex; align-items: center; gap: 4px;">
+                    <i class="fa-solid fa-boxes-stacked"></i> ${currentLang === "th" ? `คงเหลือในคลัง: ${product.stock} ชิ้น` : `In Stock: ${product.stock} units`}
+                </div>
+            `;
+        }
+
         const card = document.createElement("div");
         card.className = "product-card";
         card.innerHTML = `
@@ -584,10 +629,13 @@ function renderActiveProducts() {
                 <!-- Clinical and logistical Trust Badges with Icons -->
                 ${trustBadgesHtml}
                 
+                <!-- Dynamic Stock Level Indicators -->
+                ${stockHtml}
+                
                 <div class="product-footer">
                     <div class="product-price">${product.price} <span>${currentLang === "th" ? "บาท" : "THB"}</span></div>
-                    <button class="add-to-cart-btn" onclick="addToCart(${product.id})">
-                        <i class="fa-solid fa-cart-plus"></i> ${currentLang === "th" ? "เพิ่มลงตะกร้า" : "Add to Cart"}
+                    <button class="add-to-cart-btn" onclick="addToCart(${product.id})" ${isOutOfStock ? 'disabled style="background:var(--text-muted); cursor:not-allowed; box-shadow:none;"' : ''}>
+                        <i class="fa-solid ${isOutOfStock ? 'fa-circle-xmark' : 'fa-cart-plus'}"></i> ${isOutOfStock ? (currentLang === "th" ? "สินค้าหมด" : "Out of Stock") : (currentLang === "th" ? "เพิ่มลงตะกร้า" : "Add to Cart")}
                     </button>
                 </div>
                 <!-- Compare Checkbox -->
@@ -1303,15 +1351,27 @@ function loadCartFromStorage() {
     }
 }
 
-// Product add to cart wrapper with drug allergy EHR intercept
+// Product add to cart wrapper with drug allergy EHR intercept and active stock control
 window.addToCart = function(productId) {
+    const activeList = products[currentLang];
+    const product = activeList.find(p => p.id === productId);
+    if (!product) return;
+    
+    // Check stock first (Upgrade 4)
+    if (product.stock <= 0) {
+        showToast(currentLang === "th" ? "✗ ขออภัย สินค้านี้หมดคลังแล้ว" : "✗ Sorry, this product is out of stock.");
+        return;
+    }
+    
     // Intercept checking
     const isSafe = checkAllergyBeforeCart(productId);
     if (!isSafe) return;
     
-    const activeList = products[currentLang];
-    const product = activeList.find(p => p.id === productId);
-    if (!product) return;
+    // Decrement stock in both language databases to keep them fully synced
+    Object.keys(products).forEach(lang => {
+        const item = products[lang].find(p => p.id === productId);
+        if (item) item.stock -= 1;
+    });
     
     const existingItem = cart.find(item => item.id === productId);
     if (existingItem) {
@@ -1330,6 +1390,9 @@ window.addToCart = function(productId) {
     saveCartToStorage();
     playSound("cart");
     showToast(currentLang === "th" ? `เพิ่ม "${product.name.split(' ')[0]}" ลงตะกร้าแล้ว!` : `Added "${product.name.split(' ')[0]}" to Cart!`);
+    
+    // Rerender active products grid to reflect stock reduction
+    renderActiveProducts();
     
     cartCountBadge.style.animation = 'none';
     setTimeout(() => {
