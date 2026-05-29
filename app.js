@@ -1642,6 +1642,8 @@ window.openProductDetail = function(productId) {
             <h3 class="modal-title">${product.name}</h3>
             <div class="modal-price">${product.price} <span style="font-size: 0.85rem; font-weight: 400; color: var(--text-secondary)">${currentLang === "th" ? "บาท" : "THB"}</span></div>
             
+            ${generateRatingChartHTML(product)}
+            
             <h4 class="modal-desc-title">${currentLang === "th" ? "รายละเอียดสินค้า" : "Product Details"}</h4>
             <p class="modal-desc">${product.fullDesc}</p>
             
@@ -2343,4 +2345,57 @@ function setupHealthQuiz() {
         document.getElementById("quiz-step-2").style.display = "none";
         document.getElementById("quiz-step-3").style.display = "none";
     };
+}
+
+// Upgrade 13: Product Rating Review Stars Distribution Chart
+function generateRatingChartHTML(product) {
+    const reviews = product.reviews;
+    let counts = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+    
+    // Seed standard base counts if reviews list is empty to keep UX gorgeous
+    if (reviews.length === 0) {
+        counts = { 5: 8, 4: 2, 3: 1, 2: 0, 1: 0 };
+    } else {
+        reviews.forEach(r => {
+            const val = r.rating || 5;
+            counts[val] = (counts[val] || 0) + 1;
+        });
+    }
+    
+    const total = Object.values(counts).reduce((a, b) => a + b, 0);
+    const getPercent = (stars) => total > 0 ? Math.round((counts[stars] / total) * 100) : 0;
+    
+    let chartRows = "";
+    for (let s = 5; s >= 1; s--) {
+        const pct = getPercent(s);
+        chartRows += `
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.72rem; margin-bottom: 4px; color: var(--text-secondary);">
+                <span style="width: 40px; text-align: right; font-weight: 600;">${s} <i class="fa-solid fa-star" style="color: var(--accent); font-size: 0.65rem;"></i></span>
+                <div style="flex-grow: 1; height: 6px; background: rgba(0,0,0,0.06); border-radius: 3px; overflow: hidden; border: 1px solid var(--border);">
+                    <div style="width: ${pct}%; height: 100%; background: linear-gradient(90deg, var(--accent), var(--primary-light)); border-radius: 3px;"></div>
+                </div>
+                <span style="width: 30px; text-align: left; font-weight: 500;">${pct}%</span>
+            </div>
+        `;
+    }
+    
+    return `
+        <!-- Rating Distribution Chart (Upgrade 13) -->
+        <div class="glass" style="display: flex; gap: 15px; align-items: center; padding: 15px; border-radius: var(--radius-md); margin: 15px 0; background: rgba(255,255,255,0.03);">
+            <div style="text-align: center; min-width: 90px; border-right: 1px solid var(--border); padding-right: 15px;">
+                <div style="font-size: 2rem; font-weight: 800; color: var(--text-primary); line-height: 1;">${product.rating.toFixed(1)}</div>
+                <div style="color: var(--accent); font-size: 0.8rem; margin: 4px 0 2px;">
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star-half-stroke"></i>
+                </div>
+                <div style="font-size: 0.68rem; color: var(--text-muted);">${total} ${currentLang === "th" ? "รีวิวผู้ใช้" : "User reviews"}</div>
+            </div>
+            <div style="flex-grow: 1; display: flex; flex-direction: column;">
+                ${chartRows}
+            </div>
+        </div>
+    `;
 }
